@@ -1,0 +1,169 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Instela",
+  "Parameters": {
+    "LambdaMemorySize": {
+      "Type": "Number",
+      "Default": "128",
+      "Description": "AWS Lambda Function Maximum Allowed Memory."
+    },
+    "LambdaMaximumExecutionTime": {
+      "Type": "Number",
+      "Default": "3",
+      "Description": "AWS Lambda Function Maximum Execution Time (seconds)."
+    },
+    "DeploymentS3Bucket": {
+      "Description": "Deployment S3 Bucket is where project is deployed after mvn deploy command.",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "25"
+    },
+    "DeploymentS3Key": {
+      "Description": "Deployment S3 Key is the S3 Path where project is deployed after mvn deploy command.",
+      "Type": "String",
+      "MinLength": "1"
+    },
+    "LambdaDescription": {
+      "Description": "Lambda Description",
+      "Type": "String",
+      "MinLength": "1"
+    },
+    "LambdaExecutionRoleManagedPolicyARNs": {
+      "Description": "Managed Policy ARNs for Lambda Execution IAM Role",
+      "Type": "CommaDelimitedList",
+      "Default": "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+    }
+  },
+  "Mappings": {
+  },
+  "Resources": {
+    "LambadaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com",
+                  "apigateway.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyArns": {
+          "Ref": "LambdaExecutionRoleManagedPolicyARNs"
+        }
+      }
+    },
+    "LambadaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "${stage}-${project}-lambda",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "lambda:InvokeFunction"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "apigateway:*",
+                "iam:PassRole"
+              ],
+              "Resource": [
+                "*"
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambadaExecutionRole"
+          }
+        ]
+      }
+    },
+    "LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "org.lambadaframework.runtime.Handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LambadaExecutionRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "DeploymentS3Bucket"
+          },
+          "S3Key": {
+            "Ref": "DeploymentS3Key"
+          }
+        },
+        "Runtime": "java8",
+        "Timeout": {
+          "Ref": "LambdaMaximumExecutionTime"
+        },
+        "MemorySize": {
+          "Ref": "LambdaMemorySize"
+        },
+        "Description": {
+          "Ref": "LambdaDescription"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "LambdaExecutionRoleArn": {
+      "Description": "Lambada Execution Role ARN",
+      "Value": {
+        "Fn::GetAtt": [
+          "LambadaExecutionRole",
+          "Arn"
+        ]
+      }
+    },
+    "LambdaFunctionArn": {
+      "Description": "Lambada Function ARN",
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaFunction",
+          "Arn"
+        ]
+      }
+    }
+  }
+}
