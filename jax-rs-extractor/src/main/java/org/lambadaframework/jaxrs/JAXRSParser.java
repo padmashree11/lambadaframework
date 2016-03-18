@@ -180,15 +180,12 @@ public class JAXRSParser {
             Resource resource = Resource.from(clazz, true);
 
             if (resource == null) {
-                System.out.println("Resource could not find: " + clazz.getName());
                 return foundResources;
             }
 
-            System.out.println("Resource found: " + clazz.getName());
             foundResources.add(resource);
             return getResourcesFromClassRecursive(resource, foundResources);
         } catch (Exception e) {
-            System.out.println("Resource could not be opened");
             e.printStackTrace();
             return foundResources;
         }
