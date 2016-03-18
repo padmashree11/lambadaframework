@@ -2,6 +2,7 @@ package org.lambadaframework.deployer;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.lambadaframework.deployer.aws.LambdaFunction;
 import org.lambadaframework.deployer.aws.ApiGateway;
 import org.lambadaframework.deployer.aws.Cloudformation;
@@ -15,7 +16,9 @@ import java.io.IOException;
 import java.util.*;
 
 
-@Mojo(name = "deploy-lambda")
+@Mojo(name = "deploy-lambda",
+        defaultPhase = LifecyclePhase.DEPLOY
+)
 public class LambadaDeployer extends AbstractMojo {
 
     @Parameter(required = true)
