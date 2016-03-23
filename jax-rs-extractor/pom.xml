@@ -24,6 +24,14 @@
             <artifactId>jersey-server</artifactId>
             <version>2.22.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.lambadaframework</groupId>
+            <artifactId>lambada-stub-handlers</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <testSourceDirectory>${project.basedir}/tests/java</testSourceDirectory>

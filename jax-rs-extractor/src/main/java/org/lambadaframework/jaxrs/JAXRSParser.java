@@ -103,8 +103,15 @@ public class JAXRSParser {
 
 
             final String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            final String packagePath = jarPath + packageName.replace(classSeperator, File.separator);
 
+            if (jarPath.endsWith(".jar")) {
+                /**
+                 * This class is in JAR File, we can scan it
+                 */
+                return getClassesInJarFile(jarPath);
+            }
+
+            final String packagePath = jarPath + packageName.replace(classSeperator, File.separator);
 
             Files.walkFileTree(Paths.get(packagePath), new SimpleFileVisitor<Path>() {
                 @Override
