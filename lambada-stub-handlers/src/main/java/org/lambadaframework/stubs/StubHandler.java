@@ -1,5 +1,4 @@
-package org.lambadaframework.testhandlers;
-
+package org.lambadaframework.stubs;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -7,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 
 @Path("/resource1")
-public class JAXRSHandler {
+public class StubHandler {
 
     public static class NewEntityRequest {
 
