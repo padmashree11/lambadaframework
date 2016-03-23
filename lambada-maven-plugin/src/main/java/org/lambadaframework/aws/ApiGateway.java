@@ -1,4 +1,4 @@
-package org.lambadaframework.deployer.aws;
+package org.lambadaframework.aws;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -128,7 +128,7 @@ public class ApiGateway extends AWSTools {
 
         String apiUrl = "https://" +
                 amazonApi.getId() +
-                ".execute-api" +
+                ".execute-api." +
                 deployment.getRegion() +
                 ".amazonaws.com/" +
                 deployment.getStage();
@@ -171,7 +171,7 @@ public class ApiGateway extends AWSTools {
         createOrUpdateApi();
     }
 
-    protected String cleanUpTrailingEndLeadingSlashes(String stringToClean) {
+    protected static String cleanUpTrailingEndLeadingSlashes(String stringToClean) {
 
         if (stringToClean.startsWith(SLASH_CHARACTER)) {
             stringToClean = stringToClean.substring(1);
@@ -184,7 +184,7 @@ public class ApiGateway extends AWSTools {
         return stringToClean;
     }
 
-    protected String getFullPartOfResource(Resource resource) {
+    public static String getFullPartOfResource(Resource resource) {
         String path = SLASH_CHARACTER;
         do {
             path =
@@ -200,7 +200,7 @@ public class ApiGateway extends AWSTools {
     /**
      * Gets path param of the resource
      *
-     * @param resource
+     * @param resource Resource
      * @return
      */
     protected String getPathPartOfResource(Resource resource) {

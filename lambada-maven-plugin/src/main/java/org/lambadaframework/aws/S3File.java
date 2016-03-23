@@ -1,4 +1,4 @@
-package org.lambadaframework.deployer.aws;
+package org.lambadaframework.aws;
 
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;

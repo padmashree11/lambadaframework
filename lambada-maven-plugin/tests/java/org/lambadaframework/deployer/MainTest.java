@@ -22,7 +22,6 @@ public class MainTest {
         deployer.mavenProject = project;
         deployer.stageToDeploy = "dev";
         deployer.regionToDeploy = "eu-west-1";
-        deployer.versionToDeploy = "0.0.1";
         return deployer;
     }
 

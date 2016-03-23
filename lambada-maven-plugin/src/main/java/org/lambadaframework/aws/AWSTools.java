@@ -1,4 +1,4 @@
-package org.lambadaframework.deployer.aws;
+package org.lambadaframework.aws;
 
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;

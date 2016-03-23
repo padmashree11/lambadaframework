@@ -2,7 +2,7 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
-import org.lambadaframework.deployer.aws.S3File;
+import org.lambadaframework.aws.S3File;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.w3c.dom.Document;
@@ -39,18 +39,18 @@ public class Deployment {
 
     private static final String deploymentBucketPropertyName = "deployment.bucket";
 
-    protected static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
-    protected static final int LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE = 3;
+    public static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
+    public static final int LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE = 3;
 
-    protected static final String LAMBDA_MEMORY_SIZE_KEY = "LambdaMemorySize";
-    protected static final int LAMBDA_MEMORY_SIZE_DEFAULT_VALUE = 128;
+    public static final String LAMBDA_MEMORY_SIZE_KEY = "LambdaMemorySize";
+    public static final int LAMBDA_MEMORY_SIZE_DEFAULT_VALUE = 128;
 
-    protected static final String LAMBDA_EXECUTION_ROLE_POLICY_KEY = "LambdaExecutionRoleManagedPolicyARNs";
+    public static final String LAMBDA_EXECUTION_ROLE_POLICY_KEY = "LambdaExecutionRoleManagedPolicyARNs";
 
-    protected static final String S3_DEPLOYMENT_BUCKET_KEY = "DeploymentS3Bucket";
-    protected static final String S3_DEPLOYMENT_KEY_KEY = "DeploymentS3Key";
+    public static final String S3_DEPLOYMENT_BUCKET_KEY = "DeploymentS3Bucket";
+    public static final String S3_DEPLOYMENT_KEY_KEY = "DeploymentS3Key";
 
-    protected static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
+    public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
 
     protected Log log;
 
@@ -149,7 +149,7 @@ public class Deployment {
     }
 
     public String getJarFileLocationOnLocalFileSystem() {
-        return project.getBasedir() + seperator + "target" + seperator + project.getArtifactId() + "-" + getVersion() + ".jar";
+        return project.getBuild().getDirectory() + seperator + project.getBuild().getFinalName() + "." + project.getPackaging();
     }
 
     public String getBucketName() {

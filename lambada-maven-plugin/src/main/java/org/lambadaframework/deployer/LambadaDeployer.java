@@ -3,76 +3,19 @@ package org.lambadaframework.deployer;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.lambadaframework.deployer.aws.LambdaFunction;
-import org.lambadaframework.deployer.aws.ApiGateway;
-import org.lambadaframework.deployer.aws.Cloudformation;
-import org.apache.maven.plugin.AbstractMojo;
+import org.lambadaframework.AbstractMojoPlugin;
+import org.lambadaframework.aws.LambdaFunction;
+import org.lambadaframework.aws.ApiGateway;
+import org.lambadaframework.aws.Cloudformation;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
-import java.io.IOException;
-import java.util.*;
 
 
 @Mojo(name = "deploy-lambda",
-        defaultPhase = LifecyclePhase.DEPLOY
+        defaultPhase = LifecyclePhase.DEPLOY,
+        requiresOnline = true
 )
-public class LambadaDeployer extends AbstractMojo {
-
-    @Parameter(required = true)
-    public String packageName;
-
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    public MavenProject mavenProject;
-
-    @Parameter(required = true)
-    public String stageToDeploy;
-
-    @Parameter
-    public String versionToDeploy;
-
-    /**
-     * Specifies the region where the application will be deployed.
-     * Should be a valid AWS Region with Lambda and API Gateway support
-     */
-    @Parameter(required = true)
-    public String regionToDeploy;
-
-    /**
-     * Specifies the maximum execution time allowed for Lambda function (seconds)
-     */
-    @Parameter(defaultValue = "3")
-    public String lambdaMaximumExecutionTime = "3";
-
-    /**
-     * Specifies the maximum memory size allowed for Lambda function (MB)
-     */
-    @Parameter(defaultValue = "128")
-    public String lambdaMemorySize = "128";
-
-    /**
-     * Lambda execution role policy ARN
-     * <p>
-     * This policy is attached to the default Lambda execution profile.
-     * <p>
-     * With this policy, Lambda function can access to the resources allowed in the policy.
-     * <p>
-     * In case of this property is not set, a default policy with sufficient permissions
-     * to execute Lambda function in a VPC is assigned to the Lambda function.
-     */
-    @Parameter
-    public List<CharSequence> lambdaExecutionRolePolicies;
-
-
-    @Parameter
-    public List<String> lambdaSecurityGroups;
-
-    @Parameter
-    public List<String> lambdaSubnetIds;
-
-    public static final String LOG_SEPERATOR = new String(new char[72]).replace("\0", "-");
+public class LambadaDeployer extends AbstractMojoPlugin {
 
 
     /**
@@ -109,32 +52,6 @@ public class LambadaDeployer extends AbstractMojo {
     }
 
 
-    public Deployment getDeployment() {
-
-        Properties cloudFormationParameters = new Properties();
-        cloudFormationParameters.setProperty(Deployment.LAMBDA_MAXIMUM_EXECUTION_TIME_KEY, lambdaMaximumExecutionTime);
-        cloudFormationParameters.setProperty(Deployment.LAMBDA_MEMORY_SIZE_KEY, lambdaMemorySize);
-
-        if (lambdaExecutionRolePolicies != null) {
-            cloudFormationParameters.setProperty(Deployment.LAMBDA_EXECUTION_ROLE_POLICY_KEY, String.join(",", lambdaExecutionRolePolicies));
-        }
-
-        Deployment deployment = new Deployment(
-                mavenProject,
-                packageName,
-                cloudFormationParameters,
-                regionToDeploy,
-                stageToDeploy);
-        deployment.setLog(getLog());
-        if (lambdaSecurityGroups != null && lambdaSubnetIds != null) {
-            deployment.setLambdaSecurityGroups(lambdaSecurityGroups);
-            deployment.setLambdaSubnetIds(lambdaSubnetIds);
-        } else if (lambdaSecurityGroups != null || lambdaSubnetIds != null) {
-            throw new RuntimeException("lambdaSecurityGroups and lambdaSubnetIds should be set together.");
-        }
-        return deployment;
-    }
-
     /**
      * @throws MojoExecutionException
      */
@@ -142,13 +59,7 @@ public class LambadaDeployer extends AbstractMojo {
         try {
 
             Deployment deployment = getDeployment();
-            getLog().info(LOG_SEPERATOR);
-            getLog().info("__     ");
-            getLog().info("\\ \\    ");
-            getLog().info(" \\ \\   ");
-            getLog().info("  > \\  ");
-            getLog().info(" / ^ \\ ");
-            getLog().info("/_/ \\_\\");
+            printLogo();
             getLog().info("Deployment to AWS Lambda and Gateway is starting.");
 
             checkRegion(regionToDeploy);

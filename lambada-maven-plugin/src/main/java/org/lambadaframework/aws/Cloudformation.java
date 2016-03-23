@@ -1,4 +1,4 @@
-package org.lambadaframework.deployer.aws;
+package org.lambadaframework.aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Region;
