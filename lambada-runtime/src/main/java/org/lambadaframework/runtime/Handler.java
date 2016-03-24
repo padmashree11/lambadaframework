@@ -17,19 +17,8 @@ public class Handler
     static final Logger logger = LambdaLogger.getLogger(Handler.class);
 
     static {
-        /**
-         * The worst hack ever.
-         *
-         * We need this dynamically loaded class but maven-shade plugin does not include it
-         * on minimize stage. So we try to declare it here manually although it causes an exception.
-         */
-        try {
-            RuntimeDelegateImpl.getInstance();
-        } catch (Exception e) {
-            /**
-             * DO NOTHING
-             */
-        }
+
+
 
     }
 
@@ -67,15 +56,15 @@ public class Handler
     public Response handleRequest(Request request, Context context) {
 
         try {
-            logger.debug("Request started with " + request + " and " + context);
+            //logger.debug("Request started with " + request + " and " + context);
 
             checkHttpMethod(request);
-            logger.debug("Request check is ok.");
+            //logger.debug("Request check is ok.");
 
-            logger.debug("Matching request to a resource handler.");
+            //logger.debug("Matching request to a resource handler.");
             ResourceMethod matchedResourceMethod = getRouter().route(request);
 
-            logger.debug("Returning result.");
+            //logger.debug("Returning result.");
             return Response.buildFromJAXRSResponse(ResourceMethodInvoker.invoke(matchedResourceMethod, request, context));
         } catch (Exception ex) {
             return ErrorHandler.getErrorResponse(ex);

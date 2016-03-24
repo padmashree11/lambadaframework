@@ -193,7 +193,6 @@ public class JAXRSParser {
             foundResources.add(resource);
             return getResourcesFromClassRecursive(resource, foundResources);
         } catch (Exception e) {
-            e.printStackTrace();
             return foundResources;
         }
     }

@@ -110,9 +110,7 @@ public final class Router {
 
     private String calculateCacheKeyForRequest(Request request) {
         return request.getPathTemplate() + "-" +
-                request.getMethod() + "-" +
-                request.getConsumedMediaType() + "-" +
-                request.getProducedMediaType();
+                request.getMethod();
     }
 
     public ResourceMethod route(Request request)
