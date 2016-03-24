@@ -4,13 +4,11 @@ import org.apache.log4j.Logger;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.lambadaframework.jaxrs.JAXRSParser;
-import org.lambadaframework.runtime.logging.LambdaLogger;
+import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.router.types.*;
 
 import javax.ws.rs.NotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

@@ -1,9 +1,9 @@
-package org.lambadaframework.runtime.logging;
+package org.lambadaframework.logger;
 
 
 import com.amazonaws.services.lambda.runtime.log4j.LambdaAppender;
 import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 
 public class LambdaLogger {
@@ -20,9 +20,11 @@ public class LambdaLogger {
         return appender;
     }
 
-    public static Logger getLogger(Class clazz) {
+    public static org.apache.log4j.Logger getLogger(Class clazz) {
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(clazz);
+        logger.setLevel(Level.ERROR);
         logger.addAppender(getAppender());
         return logger;
     }
 }
+

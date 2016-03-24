@@ -5,7 +5,6 @@
         <artifactId>lambada</artifactId>
         <version>0.0.1</version>
     </parent>
-
     <artifactId>lambada-runtime</artifactId>
     <packaging>jar</packaging>
 
@@ -28,12 +27,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-log4j</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.7.0</version>
@@ -41,8 +34,14 @@
 
         <dependency>
             <groupId>org.lambadaframework</groupId>
+            <artifactId>lambada-logger</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lambadaframework</groupId>
             <artifactId>jax-rs-extractor</artifactId>
-            <version>0.0.1</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>

@@ -2,8 +2,8 @@ package org.lambadaframework.runtime;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
-import org.lambadaframework.runtime.logging.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.router.Router;
@@ -15,12 +15,6 @@ public class Handler
         implements RequestHandler<Request, Response> {
 
     static final Logger logger = LambdaLogger.getLogger(Handler.class);
-
-    static {
-
-
-
-    }
 
     private Router router;
 
@@ -56,15 +50,15 @@ public class Handler
     public Response handleRequest(Request request, Context context) {
 
         try {
-            //logger.debug("Request started with " + request + " and " + context);
+            logger.debug("Request started with " + request + " and " + context);
 
             checkHttpMethod(request);
-            //logger.debug("Request check is ok.");
+            logger.debug("Request check is ok.");
 
-            //logger.debug("Matching request to a resource handler.");
+            logger.debug("Matching request to a resource handler.");
             ResourceMethod matchedResourceMethod = getRouter().route(request);
 
-            //logger.debug("Returning result.");
+            logger.debug("Returning result.");
             return Response.buildFromJAXRSResponse(ResourceMethodInvoker.invoke(matchedResourceMethod, request, context));
         } catch (Exception ex) {
             return ErrorHandler.getErrorResponse(ex);

@@ -2,7 +2,7 @@ package org.lambadaframework.runtime.errorhandling;
 
 
 import org.apache.log4j.Logger;
-import org.lambadaframework.runtime.logging.LambdaLogger;
+import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.error.BadRequestResponse;
 import org.lambadaframework.runtime.models.error.ErrorResponse;
 import org.lambadaframework.runtime.models.error.NotFoundErrorResponse;

@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.ResourceMethod;
-import org.lambadaframework.runtime.logging.LambdaLogger;
+import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 
 import javax.ws.rs.HeaderParam;

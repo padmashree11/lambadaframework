@@ -8,7 +8,6 @@
         <version>0.0.1</version>
     </parent>
 
-
     <artifactId>local-runner</artifactId>
     <packaging>jar</packaging>
 

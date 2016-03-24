@@ -6,13 +6,9 @@
         <artifactId>lambada</artifactId>
         <version>0.0.1</version>
     </parent>
-
     <artifactId>jax-rs-extractor</artifactId>
     <packaging>jar</packaging>
-
     <name>Lambada JAX-RS Scanner</name>
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
