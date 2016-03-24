@@ -150,7 +150,7 @@ public class JAXRSParser {
     /**
      * Scans package for JAX-RS Annotations
      *
-     * @return List<Resource>
+     * @return Found resources
      */
     public List<Resource> scan() {
         List<Resource> foundResources = new LinkedList<>();

@@ -31,11 +31,11 @@ public class JAXRSParserTest {
     public void testScanPackage() throws Exception {
         JAXRSParser parser = new JAXRSParser().withPackageName("org.lambadaframework", StubHandler.class);
         List<Resource> resourceList = parser.scan();
-        assertEquals(5, resourceList.size());
+        assertEquals(3, resourceList.size());
         int totalMethod = 0;
         for (Resource resource : resourceList) {
             totalMethod += resource.getResourceMethods().size();
         }
-        assertEquals(7, totalMethod);
+        assertEquals(5, totalMethod);
     }
 }

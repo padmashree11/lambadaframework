@@ -30,17 +30,24 @@ public final class Router {
 
     private Map<String, ResourceMethod> routingCache = new ConcurrentHashMap<>();
 
-
     private List<RouterType> routerTypes = new LinkedList<>();
 
+    JAXRSParser jaxrsParser;
+
+    public Router setJaxrsParser(JAXRSParser jaxrsParser) {
+        this.jaxrsParser = jaxrsParser;
+        return this;
+    }
 
     /**
      * Gets the singleton instance
+     * <p>
+     * Why do we use singleton? Because Handler class is directly invoked by AWS Lambda runtime
+     * and we do not have a chance to inject its dependencies.
      *
      * @return Router
      */
     public static Router getRouter() {
-
         if (singletonInstance != null) {
             logger.debug("Singleton router is being returned.");
             return singletonInstance;
@@ -51,6 +58,7 @@ public final class Router {
 
     private Router() {
         logger.debug("Router is being initialized.");
+        jaxrsParser = new JAXRSParser();
         addRouterTypes();
     }
 
@@ -58,10 +66,7 @@ public final class Router {
         logger.debug("Adding router types.");
         routerTypes.add(new Path());
         routerTypes.add(new Method());
-        //routerTypes.add(new ConsumedTypes());
-        //routerTypes.add(new ProducedTypes());
         logger.debug("Router types are added.");
-
     }
 
 
@@ -69,7 +74,7 @@ public final class Router {
      * Scans package for Resources
      *
      * @param packageName Package name to scan
-     * @return List<Resource>
+     * @return Found resources
      */
     protected List<Resource> getJAXRSResourcesFromPackage(String packageName) {
 
@@ -85,7 +90,7 @@ public final class Router {
         }
 
         logger.debug("Cached resource map not found. Scanning package.");
-        JAXRSParser jaxrsParser = new JAXRSParser().withPackageName(packageName, Router.class);
+        JAXRSParser jaxrsParser = this.jaxrsParser.withPackageName(packageName, Router.class);
         List<Resource> foundResources = jaxrsParser.scan();
         resourceMap.put(packageName, foundResources);
         logger.debug(foundResources.size() + " resources found.");

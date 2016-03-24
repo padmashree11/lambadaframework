@@ -12,6 +12,14 @@
     <name>Lambada Runtime Module</name>
 
     <dependencies>
+        <!-- Dependency injection -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.0</version>
+            <classifier>no_aop</classifier>
+        </dependency>
+
         <!-- AWS Lambda dependencies -->
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -44,32 +52,14 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.lambadaframework</groupId>
+            <artifactId>lambada-stub-handlers</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <testSourceDirectory>${project.basedir}/tests/java</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>

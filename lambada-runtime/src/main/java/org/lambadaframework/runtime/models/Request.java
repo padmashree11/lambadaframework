@@ -1,6 +1,7 @@
 package org.lambadaframework.runtime.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.util.Map;
@@ -9,8 +10,8 @@ import java.util.Map;
  * Request class is a POJO.
  * <p>
  * Event json that lambda function got is automatically serialized to this POJO. For more details see Lambda documentation:
- *
- * @link http://docs.aws.amazon.com/lambda/latest/dg/java-handler-io-type-pojo.html
+ * <p>
+ * http://docs.aws.amazon.com/lambda/latest/dg/java-handler-io-type-pojo.html
  */
 public class Request<T> implements Serializable {
 
@@ -80,7 +81,6 @@ public class Request<T> implements Serializable {
     public RequestMethod getMethod() {
         return method;
     }
-
 
 
     public String getPackage() {

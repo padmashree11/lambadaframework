@@ -33,6 +33,20 @@ public class Handler
 
     }
 
+    private Router router;
+
+    public Handler setRouter(Router router) {
+        this.router = router;
+        return this;
+    }
+
+    public Router getRouter() {
+        if (router != null) {
+            return router;
+        }
+        return Router.getRouter();
+    }
+
     /**
      * If request object's "method" field is null or has an invalid
      * HTTP method string it is impossible to process the request
@@ -59,44 +73,12 @@ public class Handler
             logger.debug("Request check is ok.");
 
             logger.debug("Matching request to a resource handler.");
-            ResourceMethod matchedResourceMethod = Router.getRouter().route(request);
+            ResourceMethod matchedResourceMethod = getRouter().route(request);
 
             logger.debug("Returning result.");
             return Response.buildFromJAXRSResponse(ResourceMethodInvoker.invoke(matchedResourceMethod, request, context));
         } catch (Exception ex) {
             return ErrorHandler.getErrorResponse(ex);
         }
-    }
-
-    /**
-     * This method is only used by local lambda runner.
-     *
-     * @return String
-     */
-    @SuppressWarnings("unused")
-    public String getExampleEvent() {
-        String s = "{\n" +
-                "\t\"package\": \"com.cagataygurturk.testlambdahandlers\",\n" +
-                "\t\"pathTemplate\": \"/resource1/{id}/users\",\n" +
-                "\t\"method\": \"GET\",\n" +
-                "\t\"requestBody\": {\n" +
-                "\t\t\"test\": \"test2\",\n" +
-                "\t\t\"test2\": {\n" +
-                "\t\t\t\"test3\": \"test4\"\n" +
-                "\t\t}\n" +
-                "\t},\n" +
-                "\t\"path\": {\n" +
-                "\t\t\"id\": \"123\"\n" +
-                "\t},\n" +
-                "\t\"querystring\": {\n" +
-                "\t\t\"query1\": \"test1\",\n" +
-                "\t\t\"query2\": \"test2\"\n" +
-                "\t},\n" +
-                "\t\"header\": {\n" +
-                "\t\t\"X-Device-Id\": \"asdadadad\"\n" +
-                "\t}\n" +
-                "}";
-
-        return s;
     }
 }
