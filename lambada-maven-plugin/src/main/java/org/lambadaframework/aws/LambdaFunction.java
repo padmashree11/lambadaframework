@@ -37,6 +37,8 @@ public class LambdaFunction extends AWSTools {
 
     /**
      * Deploys the latest version to Lambda.
+     *
+     * @return Lambda's published version number
      */
     public String deployLatestVersion() {
         if (log != null) {
@@ -50,7 +52,9 @@ public class LambdaFunction extends AWSTools {
 
 
     /**
-     * Updates code
+     * Updates Lambda function's code.
+     *
+     * @return The latest lambda version
      */
     protected String updateCode() {
         if (log != null) {

@@ -90,7 +90,7 @@ public class ApiGateway extends AWSTools {
      * This method scans the compiled JAR package for JAX-RS Annotations and create
      * API Gateway endpoints.
      *
-     * @throws IOException
+     * @throws IOException General exception while deploying
      */
     public void deployEndpoints()
             throws IOException {
@@ -201,7 +201,7 @@ public class ApiGateway extends AWSTools {
      * Gets path param of the resource
      *
      * @param resource Resource
-     * @return
+     * @return Path part of the resource
      */
     protected String getPathPartOfResource(Resource resource) {
         String[] pathParts = resource.getPath().split(SLASH_CHARACTER);
@@ -238,7 +238,7 @@ public class ApiGateway extends AWSTools {
      * <p>
      * It used JAX-RS Scanner package, and uses the local copy of the JAR file in the target directory
      *
-     * @return List<Resource>
+     * @return Found resources
      * @throws IOException
      */
     protected List<Resource> getResources()
@@ -385,7 +385,7 @@ public class ApiGateway extends AWSTools {
      * <p>
      * This is one of the undocumented stuff of API Gateway
      *
-     * @return
+     * @return Function ARN formatted for API Gateway
      */
     protected String getFunctionArnForApiGateway() {
         return "arn:aws:apigateway:"

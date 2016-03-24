@@ -22,7 +22,7 @@ public class S3File extends AWSTools {
     /**
      * Checks if the given file exists on S3 Bucket
      *
-     * @return
+     * @return True on existing file, false on not existing
      */
     public boolean isFileExists() {
         return getS3Client().doesObjectExist(bucket, key);
@@ -31,7 +31,7 @@ public class S3File extends AWSTools {
     /**
      * Reads the file from S3 bucket and returns as a string.
      *
-     * @return
+     * @return File content
      * @throws IOException
      */
     public String getFile() throws IOException {
