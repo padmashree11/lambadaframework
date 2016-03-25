@@ -1,6 +1,7 @@
 package org.lambadaframework.jaxrs;
 
-import org.glassfish.jersey.server.model.Resource;
+
+import org.lambadaframework.jaxrs.model.Resource;
 
 import java.io.File;
 import java.io.IOException;
@@ -184,12 +185,13 @@ public class JAXRSParser {
         List<Resource> foundResources = new LinkedList<>();
 
         try {
-            Resource resource = Resource.from(clazz, true);
+            org.glassfish.jersey.server.model.Resource jerseyResource = org.glassfish.jersey.server.model.Resource.from(clazz, true);
 
-            if (resource == null) {
+            if (jerseyResource == null) {
                 return foundResources;
             }
 
+            Resource resource = new Resource(jerseyResource);
             foundResources.add(resource);
             return getResourcesFromClassRecursive(resource, foundResources);
         } catch (Exception e) {

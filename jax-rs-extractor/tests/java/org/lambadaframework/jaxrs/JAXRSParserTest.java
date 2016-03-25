@@ -1,8 +1,8 @@
 package org.lambadaframework.jaxrs;
 
 
-import org.glassfish.jersey.server.model.Resource;
 import org.junit.Test;
+import org.lambadaframework.jaxrs.model.Resource;
 import org.lambadaframework.stubs.StubHandler;
 
 import java.util.List;
