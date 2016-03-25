@@ -25,7 +25,7 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Invocable.class, ResourceMethod.class, Router.class})
+@PrepareForTest({Invocable.class, ResourceMethod.class, Router.class, org.lambadaframework.jaxrs.model.ResourceMethod.class})
 public class HandlerTest {
 
 
@@ -79,7 +79,7 @@ public class HandlerTest {
                 .andReturn(MethodHandler.create(DummyController.class))
                 .anyTimes();
 
-        ResourceMethod mockResourceMethod = PowerMock.createMock(ResourceMethod.class);
+        org.lambadaframework.jaxrs.model.ResourceMethod mockResourceMethod = PowerMock.createMock(org.lambadaframework.jaxrs.model.ResourceMethod.class);
         expect(mockResourceMethod.getInvocable())
                 .andReturn(mockInvocable)
                 .anyTimes();

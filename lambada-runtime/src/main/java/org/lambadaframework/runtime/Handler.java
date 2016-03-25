@@ -2,14 +2,13 @@ package org.lambadaframework.runtime;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.router.Router;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.internal.RuntimeDelegateImpl;
-import org.glassfish.jersey.server.model.*;
 
 public class Handler
         implements RequestHandler<Request, Response> {

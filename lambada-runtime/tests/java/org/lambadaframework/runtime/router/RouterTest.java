@@ -2,12 +2,11 @@ package org.lambadaframework.runtime.router;
 
 
 import org.glassfish.jersey.process.Inflector;
-import org.glassfish.jersey.server.model.Invocable;
-import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lambadaframework.jaxrs.JAXRSParser;
+import org.lambadaframework.jaxrs.model.Resource;
 import org.lambadaframework.runtime.models.Request;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -29,7 +28,7 @@ public class RouterTest {
     protected JAXRSParser getJAXRSParser() {
 
         List<Resource> resourceList = new LinkedList<>();
-        Resource.Builder resourceBuilder = Resource.builder();
+        org.glassfish.jersey.server.model.Resource.Builder resourceBuilder = org.glassfish.jersey.server.model.Resource.builder();
         resourceBuilder.path("/{id}");
         ResourceMethod resourceMethod = resourceBuilder
                 .addMethod("GET")
@@ -41,7 +40,7 @@ public class RouterTest {
                 })
                 .build();
 
-        resourceList.add(resourceBuilder.build());
+        resourceList.add(new Resource(resourceBuilder.build()));
         JAXRSParser mockJaxRSParser = PowerMock.createMock(JAXRSParser.class);
         expect(mockJaxRSParser.scan())
                 .andReturn(resourceList)
@@ -64,7 +63,7 @@ public class RouterTest {
                 .setPackage("org.lambadaframework")
                 .setPathtemplate("/{id}");
 
-        ResourceMethod routedResource = Router
+        org.lambadaframework.jaxrs.model.ResourceMethod routedResource = Router
                 .getRouter()
                 .setJaxrsParser(getJAXRSParser())
                 .route(request);

@@ -1,9 +1,9 @@
 package org.lambadaframework.runtime.router.types;
 
 
-import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.server.model.ResourceMethod;
 import org.glassfish.jersey.uri.UriTemplate;
+import org.lambadaframework.jaxrs.model.Resource;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.models.Request;
 
 import java.util.HashMap;

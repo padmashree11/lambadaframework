@@ -1,7 +1,7 @@
 package org.lambadaframework.runtime.router.types;
 
 
-import org.glassfish.jersey.server.model.ResourceMethod;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.models.Request;
 
 

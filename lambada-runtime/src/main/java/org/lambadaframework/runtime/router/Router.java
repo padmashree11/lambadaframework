@@ -1,9 +1,9 @@
 package org.lambadaframework.runtime.router;
 
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.server.model.ResourceMethod;
 import org.lambadaframework.jaxrs.JAXRSParser;
+import org.lambadaframework.jaxrs.model.Resource;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.router.types.*;

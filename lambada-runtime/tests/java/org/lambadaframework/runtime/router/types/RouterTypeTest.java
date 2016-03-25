@@ -1,9 +1,9 @@
 package org.lambadaframework.runtime.router.types;
 
 import org.glassfish.jersey.process.Inflector;
-import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.server.model.ResourceMethod;
 import org.junit.Test;
+import org.lambadaframework.jaxrs.model.Resource;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.models.Request;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,22 +27,23 @@ public class RouterTypeTest {
 
     private ResourceMethod getResourceMethod() {
 
-        Resource.Builder resourceBuilder = Resource.builder();
+        org.glassfish.jersey.server.model.Resource.Builder resourceBuilder = org.glassfish.jersey.server.model.Resource.builder();
         resourceBuilder.path("helloworld/{id}");
-        ResourceMethod resourceMethod = resourceBuilder
-                .addMethod("GET")
-                .consumes(MediaType.APPLICATION_JSON_TYPE)
-                .produces(MediaType.APPLICATION_JSON_TYPE)
-                .handledBy(new Inflector<ContainerRequestContext, Object>() {
-                    @Override
-                    public Object apply(ContainerRequestContext containerRequestContext) {
-                        return "HELLO";
-                    }
-                })
-                .build();
+        org.glassfish.jersey.server.model.ResourceMethod resourceMethod =
+                resourceBuilder
+                        .addMethod("GET")
+                        .consumes(MediaType.APPLICATION_JSON_TYPE)
+                        .produces(MediaType.APPLICATION_JSON_TYPE)
+                        .handledBy(new Inflector<ContainerRequestContext, Object>() {
+                            @Override
+                            public Object apply(ContainerRequestContext containerRequestContext) {
+                                return "HELLO";
+                            }
+                        })
+                        .build();
 
-        Resource resource = resourceBuilder
-                .build();
+
+        Resource resource = new Resource(resourceBuilder.build());
 
         return resource.getResourceMethods().get(0);
     }
