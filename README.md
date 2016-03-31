@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lambadaframework/lambadaframework.svg?branch=master)](https://travis-ci.org/lambadaframework/lambadaframework)
+[![Build Status](https://travis-ci.org/lambadaframework/lambadaframework.svg?branch=master)](https://travis-ci.org/lambadaframework/lambadaframework) [![Gitter](https://badges.gitter.im/lambadaframework/lambadaframework.svg)](https://gitter.im/lambadaframework/lambadaframework?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Lambada Framework (BETA)
 
