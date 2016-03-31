@@ -5,15 +5,37 @@
 
     <groupId>org.lambadaframework</groupId>
     <artifactId>lambada</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
 
-    <name>Lambada Framework</name>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <url>http://www.example.com/example-application</url>
+    <description>Lambada Framework lets you to build serverless REST API's with JAVA. It implements the JAX-RS API and
+        deploys your application easily to AWS Lambda and API Gateway
+    </description>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Cagatay Gurturk</name>
+            <email>info@cagataygurturk.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:lambadaframework/lambadaframework.git</connection>
+        <developerConnection>scm:git:git@github.com:lambadaframework/lambadaframework.git</developerConnection>
+        <url>git@github.com:lambadaframework/lambadaframework.git</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <deployment.bucket>maven.cagataygurturk.com</deployment.bucket>
         <aws-sdk.version>1.10.62</aws-sdk.version>
         <junit.version>4.11</junit.version>
         <logback.version>1.1.1</logback.version>
@@ -24,13 +46,12 @@
     </properties>
 
     <modules>
-        <module>lambada-logger</module>
-        <module>lambada-stub-handlers</module>
+        <module>logger</module>
+        <module>stub-handlers</module>
         <module>jax-rs-extractor</module>
-        <module>local-runner</module>
-        <module>lambada-runtime</module>
-        <module>lambada-maven-plugin</module>
-        <module>lambada-wagon</module>
+        <module>runtime</module>
+        <module>maven-plugin</module>
+        <module>wagon</module>
     </modules>
 
     <dependencies>
@@ -123,7 +144,6 @@
                 </executions>
                 <inherited>true</inherited>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -138,7 +158,18 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
 
 
@@ -153,15 +184,13 @@
 
 
     <distributionManagement>
-        <repository>
-            <id>aws-releases</id>
-            <name>AWS Release Repository</name>
-            <url>s3://${deployment.bucket}/releases</url>
-        </repository>
         <snapshotRepository>
-            <id>aws-snapshots</id>
-            <name>AWS Snapshot Repository</name>
-            <url>s3://${deployment.bucket}/snapshots</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 </project>

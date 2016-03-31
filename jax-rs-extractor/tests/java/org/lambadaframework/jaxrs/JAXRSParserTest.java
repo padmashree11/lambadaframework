@@ -6,7 +6,6 @@ import org.lambadaframework.jaxrs.model.Resource;
 import org.lambadaframework.stubs.StubHandler;
 
 import java.util.List;
-import java.util.jar.JarFile;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +20,7 @@ public class JAXRSParserTest {
     @Test
     public void testScanJar() throws Exception {
         JAXRSParser parser = new JAXRSParser().withJarFile(
-                "../lambada-stub-handlers/target/lambada-stub-handlers-0.0.1.jar",
+                "../stub-handlers/target/stub-handlers-0.0.2.jar",
                 "org.lambadaframework");
         List<Resource> resourceList = parser.scan();
         assertTrue(resourceList.size() > 0);
