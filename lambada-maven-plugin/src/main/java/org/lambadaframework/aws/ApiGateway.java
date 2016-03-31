@@ -6,8 +6,8 @@ import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.apigateway.AmazonApiGatewayClient;
 import com.amazonaws.services.apigateway.model.*;
 import org.lambadaframework.deployer.Deployment;
-import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.server.model.ResourceMethod;
+import org.lambadaframework.jaxrs.model.Resource;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.jaxrs.JAXRSParser;
 
 import javax.ws.rs.HeaderParam;
@@ -213,6 +213,26 @@ public class ApiGateway extends AWSTools {
 
 
     /**
+     * Gets all path elements of the resource
+     *
+     * @param resource Resource
+     * @return Get path elements
+     */
+    protected String[] getPathElementsOfResource(Resource resource) {
+        String fullPath = getFullPartOfResource(resource);
+        if (fullPath.equals(SLASH_CHARACTER)) {
+            return new String[]{
+                    SLASH_CHARACTER
+            };
+        }
+
+        String[] parts = fullPath.split(SLASH_CHARACTER);
+        parts[0] = SLASH_CHARACTER;
+        return parts;
+    }
+
+
+    /**
      * Get parent path of the resource
      *
      * @param resource Resource to find parent path
@@ -285,18 +305,7 @@ public class ApiGateway extends AWSTools {
             }
         }
 
-
-        int pick = 0;
-        while (resources.size() > 0) {
-            Resource resourceToDeploy = resources.get(pick);
-            if (deployResource(resourceToDeploy)) {
-                if (resources.remove(resourceToDeploy)) {
-                    pick = 0;
-                }
-            } else {
-                pick++;
-            }
-        }
+        resources.forEach(resourceToDeploy -> deployResource(resourceToDeploy));
     }
 
     /**
@@ -322,59 +331,52 @@ public class ApiGateway extends AWSTools {
     }
 
 
+    protected String createResource(Resource jerseyResource) {
+
+        com.amazonaws.services.apigateway.model.Resource rootResource = getResourceByPath("/");
+        String parentResource = rootResource.getId();
+
+        String[] paths = getPathElementsOfResource(jerseyResource);
+
+        for (String path : paths) {
+
+            if (path.equals(SLASH_CHARACTER)) {
+                continue;
+            }
+
+            try {
+                CreateResourceRequest createResourceInput = new CreateResourceRequest();
+                createResourceInput.withRestApiId(amazonApi.getId());
+                createResourceInput.withPathPart(path);
+                createResourceInput.withParentId(parentResource);
+                parentResource = getApiGatewayClient().createResource(createResourceInput).getId();
+            } catch (ConflictException e) {
+                /**
+                 * Resource already exists, do not do nothing
+                 */
+            }
+        }
+
+        return parentResource;
+    }
+
+
     protected boolean deployResource(Resource jerseyResource) {
 
         com.amazonaws.services.apigateway.model.Resource amazonApiResource;
-        com.amazonaws.services.apigateway.model.Resource parentResource;
         String fullPath = getFullPartOfResource(jerseyResource);
 
-        if (fullPath.equals(SLASH_CHARACTER)) {
-            if (log != null) {
-                log.info("This is parent resource, not creating again");
-            }
-            return true;
+        if (log != null) {
+            log.info("Resource is being created: " + fullPath);
         }
 
-        try {
+        String createdId = createResource(jerseyResource);
 
-            if (log != null) {
-                log.info("Resource is being created: " + fullPath);
-            }
-
-            parentResource = getResourceByPath(getParentPathOfResource(jerseyResource));
-
-            if (parentResource == null) {
-                return false;
-            }
-
-            if (log != null) {
-                log.info("Parent path: " + getParentPathOfResource(jerseyResource));
-            }
-
-            CreateResourceRequest createResourceInput = new CreateResourceRequest();
-            createResourceInput.withRestApiId(amazonApi.getId());
-            createResourceInput.withPathPart(getPathPartOfResource(jerseyResource));
-            createResourceInput.withParentId(parentResource.getId());
-
-
-            if (log != null) {
-                log.info("Deploying resource: " + fullPath + " (Parent: " + parentResource.getId() + ")");
-            }
-
-            if (log != null) {
-                log.info("Resource created: " + fullPath + " (" + getApiGatewayClient().createResource(createResourceInput).getId() + ")");
-            }
-
-            amazonApiResource = getResourceByPath(fullPath);
-
-
-        } catch (ConflictException e) {
-            amazonApiResource = getResourceByPath(fullPath);
-            if (log != null) {
-                log.info("Resource already exists: " + amazonApiResource.getId());
-            }
+        if (log != null) {
+            log.info("Resource created: " + fullPath + " (" + createdId + ")");
         }
 
+        amazonApiResource = getResourceByPath(fullPath);
         deployMethods(jerseyResource, amazonApiResource);
         return true;
     }
@@ -400,7 +402,6 @@ public class ApiGateway extends AWSTools {
 
         if (log != null) {
             log.info("Methods are being deployed");
-
             log.info("Removing all methods");
         }
 
@@ -429,7 +430,7 @@ public class ApiGateway extends AWSTools {
             } catch (InterruptedException e) {
 
                 if (log != null) {
-                    log.info("A system error occured. Recovering");
+                    log.error("A system error occured. Recovering");
                 }
 
                 deployMethods(jerseyResource, apiGatewayResource);
@@ -559,7 +560,6 @@ public class ApiGateway extends AWSTools {
             /**
              * Path parameter
              */
-
             if (parameter.isAnnotationPresent(PathParam.class)) {
                 PathParam annotation = parameter.getAnnotation(PathParam.class);
                 requestParameters.put("integration.request.path." + annotation.value(), "method.request.path." + annotation.value());
@@ -569,7 +569,6 @@ public class ApiGateway extends AWSTools {
             /**
              * Query parameter
              */
-
             if (parameter.isAnnotationPresent(QueryParam.class)) {
                 QueryParam annotation = parameter.getAnnotation(QueryParam.class);
                 requestParameters.put("integration.request.querystring." + annotation.value(), "method.request.querystring." + annotation.value());
@@ -578,7 +577,6 @@ public class ApiGateway extends AWSTools {
             /**
              * Header parameter
              */
-
             if (parameter.isAnnotationPresent(HeaderParam.class)) {
                 HeaderParam annotation = parameter.getAnnotation(HeaderParam.class);
                 requestParameters.put("integration.request.header." + annotation.value(), "method.request.header." + annotation.value());

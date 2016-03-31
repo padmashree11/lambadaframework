@@ -3,6 +3,7 @@ package org.lambadaframework;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.lambadaframework.aws.Cloudformation;
 import org.lambadaframework.deployer.Deployment;
 
 import java.util.List;
@@ -97,4 +98,21 @@ public abstract class AbstractMojoPlugin extends AbstractMojo {
         return deployment;
     }
 
+
+    /**
+     * Applies Cloudformation template.
+     * <p>
+     * Built-in Cloudformation template creates Lambda function and the necessary IAM Roles.
+     * <p>
+     * If CF template does not exist it creates a new one.
+     *
+     * @param deployment Deployment
+     * @return CloudFormationOutput
+     * @throws Exception
+     */
+    protected Cloudformation.CloudFormationOutput applyCloudFormation(Deployment deployment) throws Exception {
+        Cloudformation cloudformation = new Cloudformation(deployment);
+        cloudformation.setLog(getLog());
+        return cloudformation.createOrUpdateStack();
+    }
 }

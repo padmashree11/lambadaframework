@@ -3,11 +3,11 @@ package org.lambadaframework.server;
 import com.sun.research.ws.wadl.HTTPMethods;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
-import org.glassfish.jersey.server.model.Resource;
 import org.lambadaframework.AbstractMojoPlugin;
 import org.lambadaframework.deployer.Deployment;
 import org.lambadaframework.aws.ApiGateway;
 import org.lambadaframework.jaxrs.JAXRSParser;
+import org.lambadaframework.jaxrs.model.Resource;
 import spark.Request;
 import spark.Response;
 

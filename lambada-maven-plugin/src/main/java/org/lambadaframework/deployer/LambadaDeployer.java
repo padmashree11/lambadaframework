@@ -11,30 +11,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 
-@Mojo(name = "deploy-lambda",
+@Mojo(name = "deploy",
         defaultPhase = LifecyclePhase.DEPLOY,
         requiresOnline = true
 )
 public class LambadaDeployer extends AbstractMojoPlugin {
-
-
-    /**
-     * Applies Cloudformation template.
-     * <p>
-     * Built-in Cloudformation template creates Lambda function and the necessary IAM Roles.
-     * <p>
-     * If CF template does not exist it creates a new one.
-     *
-     * @param deployment Deployment
-     * @return CloudFormationOutput
-     * @throws Exception
-     */
-    protected Cloudformation.CloudFormationOutput applyCloudFormation(Deployment deployment) throws Exception {
-        Cloudformation cloudformation = new Cloudformation(deployment);
-        cloudformation.setLog(getLog());
-        return cloudformation.createOrUpdateStack();
-    }
-
 
     /**
      * Checks region for valid values.

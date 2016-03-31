@@ -2,7 +2,7 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
-import org.lambadaframework.aws.S3File;
+import org.lambadaframework.aws.S3;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.w3c.dom.Document;
@@ -185,9 +185,11 @@ public class Deployment {
             bucketKey = "releases/" + bucketKey;
         }
 
-        if (!(new S3File(this.getBucketName(), bucketKey)).isFileExists()) {
+        /*
+        if (!(new S3(this.getBucketName(), bucketKey)).isFileExists()) {
             throw new RuntimeException("Required version (" + version + ") does not exist on S3 bucket (s3://" + this.getBucketName() + "/" + bucketKey + ". Aborting.");
         }
+        */
 
         return bucketKey;
     }
@@ -221,7 +223,7 @@ public class Deployment {
                 log.info("Getting the latest project info from s3://" + getBucketName() + metadataFileName);
 
 
-            Document doc = loadXMLFromString((new S3File(getBucketName(), metadataFileName)).getFile());
+            Document doc = loadXMLFromString(S3.getFile(getBucketName(), metadataFileName));
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
             XPathExpression expr = xpath.compile("/metadata/versioning/latest");

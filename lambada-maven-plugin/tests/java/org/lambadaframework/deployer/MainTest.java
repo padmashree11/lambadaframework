@@ -57,7 +57,7 @@ public class MainTest {
           LambadaDeployer mojo = getExampleProject();
           mojo.findLambdaHandlers();
       }
-  */
+
     @Test
     @Ignore
     public void getJarLocation() throws Exception {
@@ -80,6 +80,7 @@ public class MainTest {
                 new Deployment(mojo.mavenProject, "org.lambadaframework", new Properties(), "dev", "eu-west-1")
         );
     }
+      */
 
 
 }

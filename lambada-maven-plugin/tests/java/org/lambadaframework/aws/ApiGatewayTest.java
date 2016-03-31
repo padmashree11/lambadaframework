@@ -1,11 +1,11 @@
 package org.lambadaframework.aws;
 
-import org.glassfish.jersey.server.model.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lambadaframework.deployer.Deployment;
 import org.lambadaframework.deployer.LambadaDeployer;
 import org.apache.maven.project.MavenProject;
+import org.lambadaframework.jaxrs.model.Resource;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -155,11 +155,66 @@ public class ApiGatewayTest {
 
         PowerMock.replay(mockResource);
 
-        assertEquals(apiGateway.getPathPartOfResource(mockResource),
-                "resource1");
+        assertEquals("resource1", apiGateway.getPathPartOfResource(mockResource));
 
-        assertEquals(apiGateway.getPathPartOfResource(mockResource),
-                "");
+        assertEquals("", apiGateway.getPathPartOfResource(mockResource));
+    }
+
+    @Test
+    public void testGetPathElementsOfResource() throws Exception {
+        String functionArn = "testArn";
+        String roleArn = "testArn";
+
+        ApiGateway apiGateway = new ApiGateway(getMockDeployment(), functionArn, roleArn);
+
+        final Resource mockRootResource = PowerMock.createMock(Resource.class);
+        final Resource mockParentResource = PowerMock.createMock(Resource.class);
+        final Resource mockResource = PowerMock.createMock(Resource.class);
+
+        expect(mockRootResource.getPath())
+                .andReturn("/")
+                .anyTimes();
+
+        expect(mockRootResource.getParent())
+                .andReturn(null)
+                .anyTimes();
+
+        expect(mockParentResource.getPath())
+                .andReturn("/resource1")
+                .anyTimes();
+
+        expect(mockParentResource.getParent())
+                .andReturn(null)
+                .anyTimes();
+
+        expect(mockResource.getPath())
+                .andReturn("test/{name}")
+                .anyTimes();
+
+        expect(mockResource.getParent())
+                .andReturn(mockParentResource)
+                .anyTimes();
+
+
+        PowerMock.replayAll();
+
+
+        String[] parts = apiGateway.getPathElementsOfResource(mockResource);
+        assertEquals(4, parts.length);
+        assertEquals("/", parts[0]);
+        assertEquals("resource1", parts[1]);
+        assertEquals("test", parts[2]);
+        assertEquals("{name}", parts[3]);
+
+        String[] rootParts = apiGateway.getPathElementsOfResource(mockRootResource);
+        assertEquals(1, rootParts.length);
+        assertEquals("/", rootParts[0]);
+
+        String[] parentParts = apiGateway.getPathElementsOfResource(mockParentResource);
+        assertEquals(2, parentParts.length);
+        assertEquals("/", parentParts[0]);
+        assertEquals("resource1", parentParts[1]);
+
     }
 
     @Test
