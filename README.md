@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lambadaframework/lambadaframework.svg?branch=master)](https://travis-ci.org/lambadaframework/lambadaframework)
+
 # Lambada Framework
 
 Lambada framework is a REST framework that implements [JAX-RS](https://jax-rs-spec.java.net/)  API and lets you deploy your applications to [AWS Lambda](https://aws.amazon.com/lambda/) and [API Gateway](https://aws.amazon.com/api-gateway/) in a serverless fashion. With Lambada you can migrate the existing JAX-RS applications with a very little effort and build scalable applications without having to deal with servers.
