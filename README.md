@@ -17,7 +17,7 @@ Lambada consists of a runtime module, a local simulator and finally a maven plug
 We prepared an example project to show how to configure a project for Lambada and deploy it to API Gateway. 
 
 1. Download the [example project](https://github.com/cagataygurturk/lambadaframework-boilerplate).
-2. Make sure your default profile has admin privileges or at least has the following profile:
+2. Make sure your default profile has admin privileges or at least has the following policy:
 
     ```
         {
@@ -40,10 +40,10 @@ We prepared an example project to show how to configure a project for Lambada an
             ]
         }
     ```
-3.  See `pom.xml` of the boilerplate project and edit the variables depending of your needs. (You must definitely change `deployment.bucket` property but you can leave the rest as defaults.)
+3. See `pom.xml` of the boilerplate project and edit the variables depending of your needs. (You must definitely change `deployment.bucket` property but you can leave the rest as defaults.)
 4. In the root repository execute the following command:
 
-`mvn deploy`
+    `mvn deploy`
 
 If the process is successful, the final URL of your API is printed on the screen. You can navigate to the URL and execute your url.
 
