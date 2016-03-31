@@ -53,7 +53,7 @@ Lambada consists of a runtime module, a maven wagon for uploading to the S3 buck
 
 1. **Package stage:** [Maven shade plugin](https://maven.apache.org/plugins/maven-shade-plugin/) creates an Uber JAR file for your project with all your dependencies and Lambada runtime module. 
 
-2.  **Pre-deploy stage:** At this stage `prepare` goal of the maven plugin executes and creates the S3 bucket if it does not exist. (Once you have the S3 bucket you can skip this stage to shorten the deployment process but the recommended way is to leave that as it is.)
+2. **Pre-deploy stage:** At this stage `prepare` goal of the maven plugin executes and creates the S3 bucket if it does not exist. (Once you have the S3 bucket you can skip this stage to shorten the deployment process but the recommended way is to leave that as it is.)
 
 3. **Deploy stage:** After creation of the JAR file, maven wagon uploads the JAR to your S3 bucket.
 
