@@ -10,6 +10,8 @@ public class LambdaLogger {
 
     private static Appender appender;
 
+    private static Level globalLogLevel = Level.ALL;
+
     private static Appender getAppender() {
         if (appender == null) {
             PatternLayout patternLayout = new PatternLayout();
@@ -20,9 +22,17 @@ public class LambdaLogger {
         return appender;
     }
 
+    public static void setLogLevel(Level level) {
+        globalLogLevel = level;
+    }
+
     public static org.apache.log4j.Logger getLogger(Class clazz) {
+        return getLogger(clazz, globalLogLevel);
+    }
+
+    public static org.apache.log4j.Logger getLogger(Class clazz, Level level) {
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(clazz);
-        logger.setLevel(Level.ERROR);
+        logger.setLevel(level);
         logger.addAppender(getAppender());
         return logger;
     }
