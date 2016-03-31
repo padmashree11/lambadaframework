@@ -109,37 +109,39 @@ All the possible parameters are as follows:
 
 Below you can find detailed information about the configuration parameters:
 
-**packageName:** The package name to scan for JAX-RS annotations.
+- **packageName:** The package name to scan for JAX-RS annotations.
 
-**regionToDeploy:** AWS Region to deploy your API. It should be a region where Lambda and API Gateway are supported.
+- **regionToDeploy:** AWS Region to deploy your API. It should be a region where Lambda and API Gateway are supported.
 
-**lambdaMaximumExecutionTime:** Maximum execution time for the AWS Lambda function.
+- **lambdaMaximumExecutionTime:** Maximum execution time for the AWS Lambda function.
 
-**lambdaMemorySize:** Maximum allowed memory size for the AWS Lambda function.
+- **lambdaMemorySize:** Maximum allowed memory size for the AWS Lambda function.
 
-*(Refer to [AWS Lambda Documentation](http://docs.aws.amazon.com/lambda/latest/dg/welcome.html) for possible values.)*
+    *(Refer to [AWS Lambda Documentation](http://docs.aws.amazon.com/lambda/latest/dg/welcome.html) for possible values.)*
 
-**lambdaExecutionRolePolicies:** For every deployment, a default execution role is created and attached to the Lambda function. This role has the minimum privileges to execute the Lambda in a VPC environment. However, in a typical scenario to make your Lambda function able to access other AWS resources you should attach the required policies to this role. You can then navigate to the [Policies section](https://console.aws.amazon.com/iam/home#policies) of AWS IAM console, create a custom policy or pick a managed one, then specify their ARN's at your `pom.xml`. For instance, to make the Lambda function to able to access the whole SNS features, you can add this line to your `pom.xml`, under :
+- **lambdaExecutionRolePolicies:** For every deployment, a default execution role is created and attached to the Lambda function. This role has the minimum privileges to execute the Lambda in a VPC environment. However, in a typical scenario to make your Lambda function able to access other AWS resources you should attach the required policies to this role. You can then navigate to the [Policies section](https://console.aws.amazon.com/iam/home#policies) of AWS IAM console, create a custom policy or pick a managed one, then specify their ARN's at your `pom.xml`. For instance, to make the Lambda function to able to access the whole SNS features, you can add this line to your `pom.xml`, under :
 
-```
-<lambdaExecutionRolePolicies>
-    <param>arn:aws:iam::aws:policy/AmazonSNSFullAccess</param>
-</lambdaExecutionRolePolicies>
+    ```
+    <lambdaExecutionRolePolicies>
+        <param>arn:aws:iam::aws:policy/AmazonSNSFullAccess</param>
+    </lambdaExecutionRolePolicies>
+    
+    ```
+    
+- **lambdaSubnetIds & lambdaSecurityGroups:** You might be wanting to configure your lambda to operate within a VPC. In this case you should set these parameter as follows:
 
-```
-**lambdaSubnetIds & lambdaSecurityGroups:** You might be wanting to configure your lambda to operate within a VPC. In this case you should set these parameter as follows:
-```
-
-<lambdaSubnetIds>
-    <params>subnet-93efeef6</params>
-    <params>subnet-93efdde6</params>
-    <params>subnet-93efees2</params>
-</lambdaSubnetIds>
-<lambdaSecurityGroups>
-    <params>sg-6c231d09</params>
-    <params>sg-6c251d42</params>
-</lambdaSecurityGroups>
-```
+    ```
+    
+    <lambdaSubnetIds>
+        <params>subnet-93efeef6</params>
+        <params>subnet-93efdde6</params>
+        <params>subnet-93efees2</params>
+    </lambdaSubnetIds>
+    <lambdaSecurityGroups>
+        <params>sg-6c231d09</params>
+        <params>sg-6c251d42</params>
+    </lambdaSecurityGroups>
+    ```
 
 ## Links:
 
