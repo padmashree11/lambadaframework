@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Lambadaframework by lambadaframework</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Lambadaframework</h1>
+        <p>Lambada Framework lets you to build serverless REST API&#39;s with JAVA. It implements the JAX-RS API and deploys your application easily to AWS Lambda and API Gateway</p>
+
+        <p class="view"><a href="https://github.com/lambadaframework/lambadaframework">View the Project on GitHub <small>lambadaframework/lambadaframework</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/lambadaframework/lambadaframework/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/lambadaframework/lambadaframework/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/lambadaframework/lambadaframework">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://travis-ci.org/lambadaframework/lambadaframework"><img src="https://travis-ci.org/lambadaframework/lambadaframework.svg?branch=master" alt="Build Status"></a></p>
+
+<h1>
+<a id="lambada-framework" class="anchor" href="#lambada-framework" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lambada Framework</h1>
+
+<p>Lambada framework is a REST framework that implements <a href="https://jax-rs-spec.java.net/">JAX-RS</a>  API and lets you deploy your applications to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> and <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> in a serverless fashion. With Lambada you can migrate the existing JAX-RS applications with a very little effort and build scalable applications without having to deal with servers.</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Support for the most common JAX-RS annotations.</li>
+<li>XML based configuration for Lambda function including VPC, custom execution role</li>
+<li>Support for multiple stages and regions.</li>
+</ul>
+
+<p>Lambada consists of a runtime module, a local simulator and finally a maven plugin to configure and deploy the whole project to API Gateway.</p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
+
+<p>We prepared an example project to show how to configure a project for Lambada and deploy it to API Gateway. </p>
+
+<ol>
+<li>Download the <a href="https://github.com/cagataygurturk/lambadaframework-boilerplate">example project</a>.</li>
+<li>
+<p>Make sure your default profile has admin privileges or at least has the following policy:</p>
+
+<pre><code>    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "cloudformation:*",
+                    "s3:*",
+                    "lambda:*",
+                    "execute-api:*",
+                    "apigateway:*",
+                    "iam:*"
+                ],
+                "Resource": [
+                    "*"
+                ]
+            }
+        ]
+    }
+</code></pre>
+</li>
+<li>See <code>pom.xml</code> of the boilerplate project and edit the variables depending of your needs. (You must definitely change <code>deployment.bucket</code> property but you can leave the rest as defaults.)</li>
+<li>
+<p>In the root repository execute the following command:</p>
+
+<p><code>mvn deploy</code></p>
+</li>
+</ol>
+
+<p>If the process is successful, the final URL of your API is printed on the screen. You can navigate to the URL and execute your url.</p>
+
+<h2>
+<a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h2>
+
+<p>Lambada consists of a runtime module, a maven wagon for uploading to the S3 bucket and finally a maven plugin for deploying. The both modules rely on a classpath scanner that scans the whole project for JAX-RS annotations. When you deploy a project with Lambada,</p>
+
+<ol>
+<li><p><strong>Package stage:</strong> <a href="https://maven.apache.org/plugins/maven-shade-plugin/">Maven shade plugin</a> creates an Uber JAR file for your project with all your dependencies and Lambada runtime module. </p></li>
+<li><p><strong>Pre-deploy stage:</strong> At this stage <code>prepare</code> goal of the maven plugin executes and creates the S3 bucket if it does not exist. (Once you have the S3 bucket you can skip this stage to shorten the deployment process but the recommended way is to leave that as it is.)</p></li>
+<li><p><strong>Deploy stage:</strong> After creation of the JAR file, maven wagon uploads the JAR to your S3 bucket.</p></li>
+<li><p><strong>Post deploy stage:</strong> After you have your JAR file in the S3 bucket, Lambada maven plugin executes again with <code>deploy</code> goal and scans all the JAR file for any JAX-RS resources. Using this information, it creates the necessary endpoints and methods in API Gateway and set up all the necessary stuff.</p></li>
+</ol>
+
+<p>Once your API gateway is created, you can open AWS Console to see how Lambada creates endpoints and methods. However, <strong>we strongly recommend</strong> to not to touch method settings because the runtime module heavily relies on the settings, specially the mapping configuration that is created automatically for you.</p>
+
+<p>When your API is invoked for the first time, the runtime module also scans the lambda function's JAR file for JAX-RS resources and creates a router map. Depending of the request's properties such as the path and HTTP method, the Lambada router finds the correct JAX-RS method to call, and serializes its response to JSON and send back to the client.</p>
+
+<h2>
+<a id="configuration-options" class="anchor" href="#configuration-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration options</h2>
+
+<p>Lambada Maven plugin has some configuration options.</p>
+
+<p>The configuration values should be present under maven plugin's configuration.</p>
+
+<pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.lambadaframework&lt;/groupId&gt;
+            &lt;artifactId&gt;lambada-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;0.0.1&lt;/version&gt;
+            &lt;configuration&gt;
+                ...
+                &lt;!-- Configuration options --&gt;
+                ....
+            &lt;/configuration&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;prepare&lt;/goal&gt;
+                        &lt;goal&gt;deploy&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<p>All the possible parameters are as follows:</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default value</th>
+<th>Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>packageName</td>
+<td>N/A</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>regionToDeploy</td>
+<td>N/A</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>stageToDeploy</td>
+<td>N/A</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>lambdaMaximumExecutionTime</td>
+<td>3</td>
+<td>No</td>
+</tr>
+<tr>
+<td>lambdaMemorySize</td>
+<td>128</td>
+<td>No</td>
+</tr>
+<tr>
+<td>lambdaExecutionRolePolicies</td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td>lambdaSubnetIds</td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td>lambdaSecurityGroups</td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<p>Below you can find detailed information about the configuration parameters:</p>
+
+<ul>
+<li><p><strong>packageName:</strong> The package name to scan for JAX-RS annotations.</p></li>
+<li><p><strong>regionToDeploy:</strong> AWS Region to deploy your API. It should be a region where Lambda and API Gateway are supported.</p></li>
+<li><p><strong>lambdaMaximumExecutionTime:</strong> Maximum execution time for the AWS Lambda function.</p></li>
+<li>
+<p><strong>lambdaMemorySize:</strong> Maximum allowed memory size for the AWS Lambda function.</p>
+
+<p><em>(Refer to <a href="http://docs.aws.amazon.com/lambda/latest/dg/welcome.html">AWS Lambda Documentation</a> for possible values.)</em></p>
+</li>
+<li>
+<p><strong>lambdaExecutionRolePolicies:</strong> For every deployment, a default execution role is created and attached to the Lambda function. This role has the minimum privileges to execute the Lambda in a VPC environment. However, in a typical scenario to make your Lambda function able to access other AWS resources you should attach the required policies to this role. You can then navigate to the <a href="https://console.aws.amazon.com/iam/home#policies">Policies section</a> of AWS IAM console, create a custom policy or pick a managed one, then specify their ARN's at your <code>pom.xml</code>. For instance, to make the Lambda function to able to access the whole SNS features, you can add this line to your <code>pom.xml</code>, under :</p>
+
+<pre><code>&lt;lambdaExecutionRolePolicies&gt;
+    &lt;param&gt;arn:aws:iam::aws:policy/AmazonSNSFullAccess&lt;/param&gt;
+&lt;/lambdaExecutionRolePolicies&gt;
+
+</code></pre>
+</li>
+<li>
+<p><strong>lambdaSubnetIds &amp; lambdaSecurityGroups:</strong> You might be wanting to configure your lambda to operate within a VPC. In this case you should set these parameter as follows:</p>
+
+<pre><code>
+&lt;lambdaSubnetIds&gt;
+    &lt;params&gt;subnet-93efeef6&lt;/params&gt;
+    &lt;params&gt;subnet-93efdde6&lt;/params&gt;
+    &lt;params&gt;subnet-93efees2&lt;/params&gt;
+&lt;/lambdaSubnetIds&gt;
+&lt;lambdaSecurityGroups&gt;
+    &lt;params&gt;sg-6c231d09&lt;/params&gt;
+    &lt;params&gt;sg-6c251d42&lt;/params&gt;
+&lt;/lambdaSecurityGroups&gt;
+</code></pre>
+</li>
+</ul>
+
+<h2>
+<a id="links" class="anchor" href="#links" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Links:</h2>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/lambda/latest/dg/welcome.html">AWS Lambda Documentation</a></li>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway Documentation</a></li>
+<li><a href="https://github.com/lambadaframework/lambadaframework-boilerplate">Lambada Framework boilerplate project</a></li>
+<li><a href="https://github.com/cagataygurturk/aws-lambda-java-boilerplate">How to use Spring IoC in AWS Lambda</a></li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing:</h2>
+
+<p>Feel free to send a PR for any contribution. We'll be publishing a Roadmap in the future.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/lambadaframework">lambadaframework</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
