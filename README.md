@@ -19,27 +19,27 @@ We prepared an example project to show how to configure a project for Lambada an
 1. Download the [example project](https://github.com/cagataygurturk/lambadaframework-boilerplate).
 2. Make sure your default profile has admin privileges or at least has the following profile:
 
-```
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "cloudformation:*",
-                    "s3:*",
-                    "lambda:*",
-                    "execute-api:*",
-                    "apigateway:*",
-                    "iam:*"
-                ],
-                "Resource": [
-                    "*"
-                ]
-            }
-        ]
-    }
-```
+    ```
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "cloudformation:*",
+                        "s3:*",
+                        "lambda:*",
+                        "execute-api:*",
+                        "apigateway:*",
+                        "iam:*"
+                    ],
+                    "Resource": [
+                        "*"
+                    ]
+                }
+            ]
+        }
+    ```
 3.  See `pom.xml` of the boilerplate project and edit the variables depending of your needs. (You must definitely change `deployment.bucket` property but you can leave the rest as defaults.)
 4. In the root repository execute the following command:
 
