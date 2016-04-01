@@ -116,8 +116,8 @@ public class ApiGateway extends AWSTools {
 
         CreateDeploymentResult deploymentResult = getApiGatewayClient().createDeployment(new CreateDeploymentRequest()
                 .withRestApiId(amazonApi.getId())
-                .withDescription(amazonApi.getDescription())
-                .withStageDescription(amazonApi.getDescription())
+                .withDescription(deployment.getProjectName() + " v" + deployment.getVersion())
+                .withStageDescription(deployment.getStage())
                 .withStageName(deployment.getStage())
         );
 
@@ -470,6 +470,7 @@ public class ApiGateway extends AWSTools {
                     .withRequestTemplates(getInputTemplate(method))
                     .withRequestParameters(getRequestParametersIntegration(method))
             );
+
 
             /**
              * Put response codes

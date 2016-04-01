@@ -74,7 +74,6 @@ public class LambdaFunction extends AWSTools {
     }
 
 
-
     /**
      * @return Alias ARN
      */
@@ -104,6 +103,9 @@ public class LambdaFunction extends AWSTools {
             log.info(publishVersionResult.getVersion() + " has been marked as " + deployment.getVersion());
             log.info("Alias ARN to be used in API Gateway is: " + aliasArn);
         }
+
+
+        givePermissionForApiGatewayEndpoint(aliasArn);
 
         return aliasArn;
     }
@@ -139,6 +141,32 @@ public class LambdaFunction extends AWSTools {
         updateAliasRequest.setName(createLambdaFriendlyVersionName(version));
         UpdateAliasResult updateAliasResult = getLambdaClient().updateAlias(updateAliasRequest);
         return updateAliasResult.getAliasArn();
+    }
+
+    public void givePermissionForApiGatewayEndpoint(String aliasArn) {
+
+        String policyId = "api-gateway-policy-" + deployment.getVersion().replace(".", "-");
+
+        try {
+            getLambdaClient().removePermission(new RemovePermissionRequest()
+                    .withFunctionName(functionArn)
+                    .withStatementId(policyId)
+
+            );
+        } catch (ResourceNotFoundException e) {
+            /**
+             * Do nothing
+             */
+        }
+
+        getLambdaClient().addPermission(new AddPermissionRequest()
+                .withAction(POLICY_ACTION)
+                .withFunctionName(aliasArn)
+                .withPrincipal(API_GATEWAY_PRINCIPAL)
+                .withStatementId(policyId)
+        );
+
+
     }
 
 }
