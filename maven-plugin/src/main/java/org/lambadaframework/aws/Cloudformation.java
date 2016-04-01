@@ -14,7 +14,7 @@ public class Cloudformation extends AWSTools {
 
     private final static String CLOUDFORMATION_TEMPLATE = "{\n" +
             "  \"AWSTemplateFormatVersion\": \"2010-09-09\",\n" +
-            "  \"Description\": \"Instela\",\n" +
+            "  \"Description\": \"\",\n" +
             "  \"Parameters\": {\n" +
             "    \"LambdaMemorySize\": {\n" +
             "      \"Type\": \"Number\",\n" +
@@ -46,6 +46,52 @@ public class Cloudformation extends AWSTools {
             "      \"Description\": \"Managed Policy ARNs for Lambda Execution IAM Role\",\n" +
             "      \"Type\": \"CommaDelimitedList\",\n" +
             "      \"Default\": \"arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole\"\n" +
+            "    },\n" +
+            "    \"SecurityGroupIds\": {\n" +
+            "      \"Description\": \"Lambda VPC Security Group Ids\",\n" +
+            "      \"Type\": \"CommaDelimitedList\",\n" +
+            "      \"Default\": \"\"\n" +
+            "    },\n" +
+            "    \"SubnetIds\": {\n" +
+            "      \"Description\": \"Lambda VPC Subnet Ids\",\n" +
+            "      \"Type\": \"CommaDelimitedList\",\n" +
+            "      \"Default\": \"\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"Conditions\": {\n" +
+            "    \"UseVpcForLambda\": {\n" +
+            "      \"Fn::Not\": [\n" +
+            "        {\n" +
+            "          \"Fn::And\": [\n" +
+            "            {\n" +
+            "              \"Fn::Equals\": [\n" +
+            "                {\n" +
+            "                  \"Fn::Join\": [\n" +
+            "                    \",\",\n" +
+            "                    {\n" +
+            "                      \"Ref\": \"SubnetIds\"\n" +
+            "                    }\n" +
+            "                  ]\n" +
+            "                },\n" +
+            "                \"\"\n" +
+            "              ]\n" +
+            "            },\n" +
+            "            {\n" +
+            "              \"Fn::Equals\": [\n" +
+            "                {\n" +
+            "                  \"Fn::Join\": [\n" +
+            "                    \",\",\n" +
+            "                    {\n" +
+            "                      \"Ref\": \"SecurityGroupIds\"\n" +
+            "                    }\n" +
+            "                  ]\n" +
+            "                },\n" +
+            "                \"\"\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          ]\n" +
+            "        }\n" +
+            "      ]\n" +
             "    }\n" +
             "  },\n" +
             "  \"Mappings\": {\n" +
@@ -156,6 +202,38 @@ public class Cloudformation extends AWSTools {
             "        },\n" +
             "        \"Description\": {\n" +
             "          \"Ref\": \"LambdaDescription\"\n" +
+            "        },\n" +
+            "        \"VpcConfig\": {\n" +
+            "          \"Fn::If\": [\n" +
+            "            \"UseVpcForLambda\",\n" +
+            "            {\n" +
+            "              \"SecurityGroupIds\": {\n" +
+            "                \"Fn::If\": [\n" +
+            "                  \"UseVpcForLambda\",\n" +
+            "                  {\n" +
+            "                    \"Ref\": \"SecurityGroupIds\"\n" +
+            "                  },\n" +
+            "                  {\n" +
+            "                    \"Ref\": \"AWS::NoValue\"\n" +
+            "                  }\n" +
+            "                ]\n" +
+            "              },\n" +
+            "              \"SubnetIds\": {\n" +
+            "                \"Fn::If\": [\n" +
+            "                  \"UseVpcForLambda\",\n" +
+            "                  {\n" +
+            "                    \"Ref\": \"SubnetIds\"\n" +
+            "                  },\n" +
+            "                  {\n" +
+            "                    \"Ref\": \"AWS::NoValue\"\n" +
+            "                  }\n" +
+            "                ]\n" +
+            "              }\n" +
+            "            },\n" +
+            "            {\n" +
+            "              \"Ref\": \"AWS::NoValue\"\n" +
+            "            }\n" +
+            "          ]\n" +
             "        }\n" +
             "      }\n" +
             "    }\n" +
@@ -254,13 +332,14 @@ public class Cloudformation extends AWSTools {
                 stackReason = "Stack has been deleted";
             } else {
                 for (Stack stack : stacks) {
-                    if (stack.getStackStatus().equals(StackStatus.CREATE_COMPLETE.toString()) ||
-                            stack.getStackStatus().equals(StackStatus.UPDATE_COMPLETE.toString()) ||
-                            stack.getStackStatus().equals(StackStatus.CREATE_FAILED.toString()) ||
-                            stack.getStackStatus().equals(StackStatus.ROLLBACK_FAILED.toString()) ||
-                            stack.getStackStatus().equals(StackStatus.DELETE_FAILED.toString()) ||
-                            stack.getStackStatus().equals(StackStatus.UPDATE_ROLLBACK_COMPLETE.toString())
-                            ) {
+
+                    if (stack.getStackStatus().contains("FAILED")
+                            || stack.getStackStatus().equals(StackStatus.UPDATE_ROLLBACK_COMPLETE.toString())) {
+                        throw new Exception("Cloudformation failed. Please check AWS Console for details");
+                    }
+
+
+                    if (stack.getStackStatus().contains("COMPLETE")) {
                         completed = true;
                         stackStatus = stack.getStackStatus();
                         stackReason = stack.getStackStatusReason();
