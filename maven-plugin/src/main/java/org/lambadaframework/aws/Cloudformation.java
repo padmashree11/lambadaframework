@@ -175,6 +175,35 @@ public class Cloudformation extends AWSTools {
             "        ]\n" +
             "      }\n" +
             "    },\n" +
+            "    \"LambdaPermissionForApiGateway\": {\n" +
+            "      \"Type\": \"AWS::Lambda::Permission\",\n" +
+            "      \"Properties\": {\n" +
+            "        \"Action\": \"lambda:InvokeFunction\",\n" +
+            "        \"FunctionName\": {\n" +
+            "          \"Fn::GetAtt\": [\n" +
+            "            \"LambdaFunction\",\n" +
+            "            \"Arn\"\n" +
+            "          ]\n" +
+            "        },\n" +
+            "        \"Principal\": \"apigateway.amazonaws.com\",\n" +
+            "        \"SourceArn\": {\n" +
+            "          \"Fn::Join\": [\n" +
+            "            \"\",\n" +
+            "            [\n" +
+            "              \"arn:aws:execute-api:\",\n" +
+            "              {\n" +
+            "                \"Ref\": \"AWS::Region\"\n" +
+            "              },\n" +
+            "              \":\",\n" +
+            "              {\n" +
+            "                \"Ref\": \"AWS::AccountId\"\n" +
+            "              },\n" +
+            "              \":*\"\n" +
+            "            ]\n" +
+            "          ]\n" +
+            "        }\n" +
+            "      }\n" +
+            "    },\n" +
             "    \"LambdaFunction\": {\n" +
             "      \"Type\": \"AWS::Lambda::Function\",\n" +
             "      \"Properties\": {\n" +
@@ -339,7 +368,9 @@ public class Cloudformation extends AWSTools {
                     }
 
 
-                    if (stack.getStackStatus().contains("COMPLETE")) {
+                    if (stack.getStackStatus().equals(StackStatus.UPDATE_COMPLETE.toString())
+                            || stack.getStackStatus().equals(StackStatus.CREATE_COMPLETE.toString())
+                            ) {
                         completed = true;
                         stackStatus = stack.getStackStatus();
                         stackReason = stack.getStackStatusReason();

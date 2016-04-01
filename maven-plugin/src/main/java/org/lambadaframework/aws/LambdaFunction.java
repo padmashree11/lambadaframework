@@ -141,30 +141,4 @@ public class LambdaFunction extends AWSTools {
         return updateAliasResult.getAliasArn();
     }
 
-    public void givePermissionForApiGatewayEndpoint(Resource apiGatewayResource) {
-
-        String policyId = "api_gateway_policy";
-
-
-
-        try {
-            getLambdaClient().removePermission(new RemovePermissionRequest()
-                    .withFunctionName(functionArn)
-                    .withStatementId(policyId)
-            );
-        } catch (ResourceNotFoundException e) {
-            /**
-             * Permission does not exist, do nothing
-             */
-        }
-
-        getLambdaClient().addPermission(new AddPermissionRequest()
-                .withAction(POLICY_ACTION)
-                .withFunctionName(functionArn)
-                .withPrincipal(API_GATEWAY_PRINCIPAL)
-                .withStatementId(policyId)
-        );
-
-
-    }
 }

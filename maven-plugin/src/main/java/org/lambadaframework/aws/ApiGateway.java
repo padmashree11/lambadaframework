@@ -471,16 +471,6 @@ public class ApiGateway extends AWSTools {
                     .withRequestParameters(getRequestParametersIntegration(method))
             );
 
-
-            /**
-             * Giving the necessary permissions to API Gateway
-             * to invoke the lambda function
-             */
-            LambdaFunction lambdaFunction = new LambdaFunction(functionArn, deployment);
-            lambdaFunction.setLog(log);
-            lambdaFunction.givePermissionForApiGatewayEndpoint(apiGatewayResource);
-
-
             /**
              * Put response codes
              */
