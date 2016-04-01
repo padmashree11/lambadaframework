@@ -33,7 +33,8 @@ We prepared an example project to show how to configure a project for Lambada an
                         "apigateway:*",
                         "iam:*",
                         "ec2:DescribeSecurityGroups",
-                        "ec2:DescribeVpcs"
+                        "ec2:DescribeVpcs",
+                        "ec2:DescribeSubnets"
                     ],
                     "Resource": [
                         "*"
