@@ -33,7 +33,8 @@ We prepared an example project to show how to configure a project for Lambada an
                         "apigateway:*",
                         "iam:*",
                         "ec2:DescribeSecurityGroups",
-                        "ec2:DescribeVpcs"
+                        "ec2:DescribeVpcs",
+                        "ec2:DescribeSubnets"
                     ],
                     "Resource": [
                         "*"
@@ -77,7 +78,7 @@ The configuration values should be present under maven plugin's configuration.
         <plugin>
             <groupId>org.lambadaframework</groupId>
             <artifactId>maven-plugin</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
             <configuration>
 	            ...
 				<!-- Configuration options -->

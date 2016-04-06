@@ -17,6 +17,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 )
 public class LambadaDeployer extends AbstractMojoPlugin {
 
+
+    protected static final String SUPPORTED_PACKAGING = "jar";
+
     /**
      * Checks region for valid values.
      * <p>
@@ -38,6 +41,12 @@ public class LambadaDeployer extends AbstractMojoPlugin {
      */
     public void execute() throws MojoExecutionException {
         try {
+
+            if (!mavenProject.getPackaging().equals(SUPPORTED_PACKAGING)) {
+                getLog().info(LOG_SEPERATOR);
+                getLog().info("Project packaging is not JAR (potentially a parent project), skipping deployment.");
+                return;
+            }
 
             Deployment deployment = getDeployment();
             printLogo();

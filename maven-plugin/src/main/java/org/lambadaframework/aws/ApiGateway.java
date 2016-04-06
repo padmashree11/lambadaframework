@@ -57,7 +57,7 @@ public class ApiGateway extends AWSTools {
             "}";
 
 
-    protected final String OUTPUT_TEMPLATE = "$input.path('$').entity";
+    protected final String OUTPUT_TEMPLATE = "$input.json('$.entity')";
 
     protected final String AUTHORIZATION_TYPE = "NONE";
     protected final String INVOCATION_METHOD = "POST";
@@ -116,8 +116,8 @@ public class ApiGateway extends AWSTools {
 
         CreateDeploymentResult deploymentResult = getApiGatewayClient().createDeployment(new CreateDeploymentRequest()
                 .withRestApiId(amazonApi.getId())
-                .withDescription(amazonApi.getDescription())
-                .withStageDescription(amazonApi.getDescription())
+                .withDescription(deployment.getProjectName() + " v" + deployment.getVersion())
+                .withStageDescription(deployment.getStage())
                 .withStageName(deployment.getStage())
         );
 
@@ -470,15 +470,6 @@ public class ApiGateway extends AWSTools {
                     .withRequestTemplates(getInputTemplate(method))
                     .withRequestParameters(getRequestParametersIntegration(method))
             );
-
-
-            /**
-             * Giving the necessary permissions to API Gateway
-             * to invoke the lambda function
-             */
-            LambdaFunction lambdaFunction = new LambdaFunction(functionArn, deployment);
-            lambdaFunction.setLog(log);
-            lambdaFunction.givePermissionForApiGatewayEndpoint(apiGatewayResource);
 
 
             /**

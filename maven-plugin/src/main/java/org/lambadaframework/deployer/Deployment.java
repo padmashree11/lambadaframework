@@ -33,10 +33,6 @@ public class Deployment {
 
     protected MavenProject project;
 
-    protected List<String> lambdaSecurityGroups;
-
-    protected List<String> lambdaSubnetIds;
-
     private static final String deploymentBucketPropertyName = "deployment.bucket";
 
     public static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
@@ -46,6 +42,11 @@ public class Deployment {
     public static final int LAMBDA_MEMORY_SIZE_DEFAULT_VALUE = 128;
 
     public static final String LAMBDA_EXECUTION_ROLE_POLICY_KEY = "LambdaExecutionRoleManagedPolicyARNs";
+
+    public static final String LAMBDA_VPC_SUBNETS_KEY = "SubnetIds";
+
+    public static final String LAMBDA_VPC_SECURITY_GROUPS_KEY = "SecurityGroupIds";
+
 
     public static final String S3_DEPLOYMENT_BUCKET_KEY = "DeploymentS3Bucket";
     public static final String S3_DEPLOYMENT_KEY_KEY = "DeploymentS3Key";
@@ -72,24 +73,6 @@ public class Deployment {
         this.log = log;
     }
 
-    public Deployment setLambdaSecurityGroups(List<String> lambdaSecurityGroups) {
-        this.lambdaSecurityGroups = lambdaSecurityGroups;
-        return this;
-    }
-
-    public List<String> getLambdaSecurityGroups() {
-        return lambdaSecurityGroups;
-    }
-
-    public List<String> getLambdaSubnetIds() {
-        return lambdaSubnetIds;
-    }
-
-    public Deployment setLambdaSubnetIds(List<String> lambdaSubnetIds) {
-
-        this.lambdaSubnetIds = lambdaSubnetIds;
-        return this;
-    }
 
     public String getPackageName() {
         return packageName;
@@ -116,6 +99,7 @@ public class Deployment {
         if (properties.getProperty(LAMBDA_MEMORY_SIZE_KEY) == null) {
             properties.setProperty(LAMBDA_MEMORY_SIZE_KEY, Integer.toString(LAMBDA_MEMORY_SIZE_DEFAULT_VALUE));
         }
+
     }
 
     public String getVersion() {

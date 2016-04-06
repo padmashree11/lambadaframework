@@ -82,19 +82,24 @@ public abstract class AbstractMojoPlugin extends AbstractMojo {
             cloudFormationParameters.setProperty(Deployment.LAMBDA_EXECUTION_ROLE_POLICY_KEY, String.join(",", lambdaExecutionRolePolicies));
         }
 
+
+        if (lambdaSecurityGroups != null && lambdaSubnetIds != null) {
+            cloudFormationParameters.setProperty(Deployment.LAMBDA_VPC_SECURITY_GROUPS_KEY, String.join(",", lambdaSecurityGroups));
+            cloudFormationParameters.setProperty(Deployment.LAMBDA_VPC_SUBNETS_KEY, String.join(",", lambdaSubnetIds));
+        } else if (lambdaSecurityGroups != null || lambdaSubnetIds != null) {
+            throw new RuntimeException("lambdaSecurityGroups and lambdaSubnetIds should be set together.");
+        }
+
         Deployment deployment = new Deployment(
                 mavenProject,
                 packageName,
                 cloudFormationParameters,
                 regionToDeploy,
                 stageToDeploy);
+
         deployment.setLog(getLog());
-        if (lambdaSecurityGroups != null && lambdaSubnetIds != null) {
-            deployment.setLambdaSecurityGroups(lambdaSecurityGroups);
-            deployment.setLambdaSubnetIds(lambdaSubnetIds);
-        } else if (lambdaSecurityGroups != null || lambdaSubnetIds != null) {
-            throw new RuntimeException("lambdaSecurityGroups and lambdaSubnetIds should be set together.");
-        }
+
+
         return deployment;
     }
 

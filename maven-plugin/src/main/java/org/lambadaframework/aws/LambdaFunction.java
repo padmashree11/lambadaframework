@@ -46,7 +46,6 @@ public class LambdaFunction extends AWSTools {
         }
 
         updateCode();
-        setupVPC();
         return publishVersion();
     }
 
@@ -72,40 +71,6 @@ public class LambdaFunction extends AWSTools {
 
         return updateFunctionCodeResult.getVersion();
 
-    }
-
-    /**
-     * Sets up VPC Configuration
-     */
-    protected void setupVPC() {
-
-        if (deployment.getLambdaSecurityGroups() == null || deployment.getLambdaSubnetIds() == null) {
-            if (log != null) {
-                log.info("VPC is not set, skipping.");
-            }
-            return;
-        }
-
-        if (log != null) {
-            log.info("VPC is being configured for Lambda function.");
-        }
-
-        VpcConfig vpcConfig = new VpcConfig();
-        vpcConfig.setSecurityGroupIds(deployment.getLambdaSecurityGroups());
-        vpcConfig.setSubnetIds(deployment.getLambdaSubnetIds());
-
-
-        UpdateFunctionConfigurationRequest updateFunctionConfigurationRequest = new UpdateFunctionConfigurationRequest();
-        updateFunctionConfigurationRequest.setVpcConfig(vpcConfig);
-        updateFunctionConfigurationRequest.setFunctionName(functionArn);
-        UpdateFunctionConfigurationResult updateFunctionConfigurationResult = getLambdaClient().updateFunctionConfiguration(updateFunctionConfigurationRequest);
-
-        if (log != null && updateFunctionConfigurationResult.getVpcConfig() != null) {
-            log.info("VPC has been configured for Lambda function as follows:");
-            log.info("VPC ID: " + updateFunctionConfigurationResult.getVpcConfig().getVpcId());
-            log.info("Subnets: " + updateFunctionConfigurationResult.getVpcConfig().getSubnetIds().toString());
-            log.info("Security groups: " + updateFunctionConfigurationResult.getVpcConfig().getSecurityGroupIds().toString());
-        }
     }
 
 
@@ -138,6 +103,9 @@ public class LambdaFunction extends AWSTools {
             log.info(publishVersionResult.getVersion() + " has been marked as " + deployment.getVersion());
             log.info("Alias ARN to be used in API Gateway is: " + aliasArn);
         }
+
+
+        givePermissionForApiGatewayEndpoint(aliasArn);
 
         return aliasArn;
     }
@@ -175,34 +143,42 @@ public class LambdaFunction extends AWSTools {
         return updateAliasResult.getAliasArn();
     }
 
-    public void givePermissionForApiGatewayEndpoint(Resource apiGatewayResource) {
+    public void givePermissionForApiGatewayEndpoint(String aliasArn) {
 
-        String policyId = "api_gateway_policy";
+        String policyId = "api-gateway-policy-" + deployment.getVersion().replace(".", "-");
 
-        if (log != null) {
-            log.info("Lambda permission is being granted for endpoint " + apiGatewayResource.getId());
+        try {
+            getLambdaClient().removePermission(new RemovePermissionRequest()
+                    .withFunctionName(aliasArn)
+                    .withStatementId(policyId)
+
+            );
+        } catch (Exception e) {
+            /**
+             * Do nothing
+             */
         }
 
         try {
             getLambdaClient().removePermission(new RemovePermissionRequest()
                     .withFunctionName(functionArn)
                     .withStatementId(policyId)
+
             );
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             /**
-             * Permission does not exist, do nothing
+             * Do nothing
              */
         }
 
         getLambdaClient().addPermission(new AddPermissionRequest()
                 .withAction(POLICY_ACTION)
-                .withFunctionName(functionArn)
+                .withFunctionName(aliasArn)
                 .withPrincipal(API_GATEWAY_PRINCIPAL)
                 .withStatementId(policyId)
         );
 
-        if (log != null) {
-            log.info("Lambda permission has been granted for endpoint " + apiGatewayResource.getId());
-        }
+
     }
+
 }

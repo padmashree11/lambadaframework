@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Instela",
+  "Description": "",
   "Parameters": {
     "LambdaMemorySize": {
       "Type": "Number",
@@ -32,6 +32,52 @@
       "Description": "Managed Policy ARNs for Lambda Execution IAM Role",
       "Type": "CommaDelimitedList",
       "Default": "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+    },
+    "SecurityGroupIds": {
+      "Description": "Lambda VPC Security Group Ids",
+      "Type": "CommaDelimitedList",
+      "Default": ""
+    },
+    "SubnetIds": {
+      "Description": "Lambda VPC Subnet Ids",
+      "Type": "CommaDelimitedList",
+      "Default": ""
+    }
+  },
+  "Conditions": {
+    "UseVpcForLambda": {
+      "Fn::Not": [
+        {
+          "Fn::And": [
+            {
+              "Fn::Equals": [
+                {
+                  "Fn::Join": [
+                    ",",
+                    {
+                      "Ref": "SubnetIds"
+                    }
+                  ]
+                },
+                ""
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Fn::Join": [
+                    ",",
+                    {
+                      "Ref": "SecurityGroupIds"
+                    }
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      ]
     }
   },
   "Mappings": {
@@ -115,6 +161,35 @@
         ]
       }
     },
+    "LambdaPermissionForApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "LambdaFunction",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":*"
+            ]
+          ]
+        }
+      }
+    },
     "LambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -142,6 +217,38 @@
         },
         "Description": {
           "Ref": "LambdaDescription"
+        },
+        "VpcConfig": {
+          "Fn::If": [
+            "UseVpcForLambda",
+            {
+              "SecurityGroupIds": {
+                "Fn::If": [
+                  "UseVpcForLambda",
+                  {
+                    "Ref": "SecurityGroupIds"
+                  },
+                  {
+                    "Ref": "AWS::NoValue"
+                  }
+                ]
+              },
+              "SubnetIds": {
+                "Fn::If": [
+                  "UseVpcForLambda",
+                  {
+                    "Ref": "SubnetIds"
+                  },
+                  {
+                    "Ref": "AWS::NoValue"
+                  }
+                ]
+              }
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
         }
       }
     }
