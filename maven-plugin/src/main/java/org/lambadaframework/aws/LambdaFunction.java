@@ -149,11 +149,23 @@ public class LambdaFunction extends AWSTools {
 
         try {
             getLambdaClient().removePermission(new RemovePermissionRequest()
+                    .withFunctionName(aliasArn)
+                    .withStatementId(policyId)
+
+            );
+        } catch (Exception e) {
+            /**
+             * Do nothing
+             */
+        }
+
+        try {
+            getLambdaClient().removePermission(new RemovePermissionRequest()
                     .withFunctionName(functionArn)
                     .withStatementId(policyId)
 
             );
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             /**
              * Do nothing
              */
