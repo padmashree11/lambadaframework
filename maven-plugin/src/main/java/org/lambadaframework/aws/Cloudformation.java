@@ -363,7 +363,9 @@ public class Cloudformation extends AWSTools {
                 for (Stack stack : stacks) {
 
                     if (stack.getStackStatus().contains("FAILED")
-                            || stack.getStackStatus().equals(StackStatus.UPDATE_ROLLBACK_COMPLETE.toString())) {
+                            || stack.getStackStatus().equals(StackStatus.UPDATE_ROLLBACK_COMPLETE.toString())
+                            || stack.getStackStatus().equals(StackStatus.ROLLBACK_COMPLETE.toString())
+                            ) {
                         throw new Exception("Cloudformation failed. Please check AWS Console for details");
                     }
 
