@@ -57,7 +57,7 @@ public class ApiGateway extends AWSTools {
             "}";
 
 
-    protected final String OUTPUT_TEMPLATE = "$input.path('$').entity";
+    protected final String OUTPUT_TEMPLATE = "$input.json('$.entity')";
 
     protected final String AUTHORIZATION_TYPE = "NONE";
     protected final String INVOCATION_METHOD = "POST";
