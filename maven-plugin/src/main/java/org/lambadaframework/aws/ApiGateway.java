@@ -418,7 +418,7 @@ public class ApiGateway extends AWSTools {
                 /**
                  * To prevent TooManyRequestsException errors from API Gateway
                  */
-                Thread.sleep(500);
+                Thread.sleep(1000);
 
                 if (log != null) {
                     log.info(methodToDelete + " method deleted on resource id " + apiGatewayResource.getId());
