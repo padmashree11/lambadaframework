@@ -15,8 +15,8 @@
     "DeploymentS3Bucket": {
       "Description": "Deployment S3 Bucket is where project is deployed after mvn deploy command.",
       "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "25"
+      "MinLength": "3",
+      "MaxLength": "63"
     },
     "DeploymentS3Key": {
       "Description": "Deployment S3 Key is the S3 Path where project is deployed after mvn deploy command.",

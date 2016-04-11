@@ -29,8 +29,8 @@ public class Cloudformation extends AWSTools {
             "    \"DeploymentS3Bucket\": {\n" +
             "      \"Description\": \"Deployment S3 Bucket is where project is deployed after mvn deploy command.\",\n" +
             "      \"Type\": \"String\",\n" +
-            "      \"MinLength\": \"1\",\n" +
-            "      \"MaxLength\": \"25\"\n" +
+            "      \"MinLength\": \"3\",\n" +
+            "      \"MaxLength\": \"63\"\n" +
             "    },\n" +
             "    \"DeploymentS3Key\": {\n" +
             "      \"Description\": \"Deployment S3 Key is the S3 Path where project is deployed after mvn deploy command.\",\n" +
