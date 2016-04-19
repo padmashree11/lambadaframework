@@ -2,8 +2,6 @@ package org.lambadaframework.runtime;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import org.ini4j.Ini;
-import org.ini4j.IniPreferences;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
@@ -11,18 +9,6 @@ import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.router.Router;
 import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-
-import javax.xml.parsers.*;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 
 public class Handler

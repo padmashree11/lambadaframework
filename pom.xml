@@ -5,7 +5,7 @@
 
     <groupId>org.lambadaframework</groupId>
     <artifactId>lambada</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -50,7 +50,7 @@
         <module>stub-handlers</module>
         <module>jax-rs-extractor</module>
         <module>runtime</module>
-        <module>maven-plugin</module>
+        <module>lambada-maven-plugin</module>
         <module>wagon</module>
     </modules>
 

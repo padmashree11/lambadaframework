@@ -4,10 +4,10 @@
     <parent>
         <groupId>org.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
-    <artifactId>maven-plugin</artifactId>
+    <artifactId>lambada-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
     <properties>
@@ -39,12 +39,6 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-api-gateway</artifactId>
-            <version>${aws-sdk.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-kms</artifactId>
             <version>${aws-sdk.version}</version>
         </dependency>
 
