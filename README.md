@@ -78,7 +78,7 @@ The configuration values should be present under maven plugin's configuration.
         <plugin>
             <groupId>org.lambadaframework</groupId>
             <artifactId>maven-plugin</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
             <configuration>
 	            ...
 				<!-- Configuration options -->
