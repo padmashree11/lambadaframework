@@ -15,6 +15,9 @@ public class ErrorHandler {
 
     static final Logger logger = LambdaLogger.getLogger(ErrorHandler.class);
 
+    private ErrorHandler() {
+    }
+
     public static ErrorResponse getErrorResponse(Exception e) {
         try {
             throw e;
