@@ -23,6 +23,9 @@ public class ResourceMethodInvoker {
 
     static final Logger logger = LambdaLogger.getLogger(ResourceMethodInvoker.class);
 
+    private ResourceMethodInvoker() {
+    }
+
     private static Object toObject(String value, Class clazz) {
         if (Integer.class == clazz || Integer.TYPE == clazz) return Integer.parseInt(value);
         if (Long.class == clazz || Long.TYPE == clazz) return Long.parseLong(value);
