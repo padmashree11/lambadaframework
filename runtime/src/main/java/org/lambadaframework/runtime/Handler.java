@@ -3,7 +3,6 @@ package org.lambadaframework.runtime;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
-import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.models.Response;
@@ -14,7 +13,7 @@ import org.apache.log4j.Logger;
 public class Handler
         implements RequestHandler<Request, Response> {
 
-    static final Logger logger = LambdaLogger.getLogger(Handler.class);
+    static final Logger logger = Logger.getLogger(Handler.class);
 
     private Router router;
 
