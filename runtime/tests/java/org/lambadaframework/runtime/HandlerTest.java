@@ -181,7 +181,7 @@ public class HandlerTest {
         handler.setRouter(getMockRouter("getEntity", long.class));
         Response response = handler.handleRequest(exampleRequest, getContext());
 
-        assertEquals(200, response.getCode());
+        assertEquals("200", response.getErrorMessage());
         assertEquals("cagatay gurturk", ((Entity) response.getEntity()).query1);
         assertEquals(123, ((Entity) response.getEntity()).id);
 
@@ -212,7 +212,7 @@ public class HandlerTest {
         handler.setRouter(getMockRouter("createEntity", long.class, String.class));
         Response response = handler.handleRequest(exampleRequest, getContext());
 
-        assertEquals(201, response.getCode());
+        assertEquals("201", response.getErrorMessage());
         assertEquals("test3", ((Entity) response.getEntity()).query1);
         assertEquals(123, ((Entity) response.getEntity()).id);
         assertEquals("http://www.google.com", response.getHeaders().get("Location"));

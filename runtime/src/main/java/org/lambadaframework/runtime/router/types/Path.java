@@ -13,13 +13,11 @@ public class Path implements RouterType {
     @Override
     public boolean isMatching(Request request, ResourceMethod resourceMethod) {
         Resource resource = resourceMethod.getParent();
-        String path = "";
-        do {
-            path = resource.getPath() + path;
-            resource = resource.getParent();
-        } while (resource != null);
 
-
-        return new UriTemplate(path).match(request.getPathTemplate(), new HashMap<>());
+        try {
+            return new UriTemplate(resource.getPath()).match(request.getPathTemplate(), new HashMap<>());
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 }

@@ -29,6 +29,8 @@ public class ApiGateway extends AWSTools {
 
     protected static final int[] RESPONSE_CODES = {
             200,
+            201,
+            202,
             301,
             302,
             400,
@@ -171,32 +173,6 @@ public class ApiGateway extends AWSTools {
         createOrUpdateApi();
     }
 
-    protected static String cleanUpTrailingEndLeadingSlashes(String stringToClean) {
-
-        if (stringToClean.startsWith(SLASH_CHARACTER)) {
-            stringToClean = stringToClean.substring(1);
-        }
-
-        if (stringToClean.endsWith(SLASH_CHARACTER)) {
-            stringToClean = stringToClean.substring(0, stringToClean.length() - 1);
-        }
-
-        return stringToClean;
-    }
-
-    public static String getFullPartOfResource(Resource resource) {
-        String path = SLASH_CHARACTER;
-        do {
-            path =
-                    SLASH_CHARACTER +
-                            cleanUpTrailingEndLeadingSlashes(resource.getPath()) +
-                            path;
-            resource = resource.getParent();
-        } while (resource != null);
-
-        return path.substring(0, path.length() - 1).replace("//", SLASH_CHARACTER);
-    }
-
     /**
      * Gets path param of the resource
      *
@@ -219,7 +195,7 @@ public class ApiGateway extends AWSTools {
      * @return Get path elements
      */
     protected String[] getPathElementsOfResource(Resource resource) {
-        String fullPath = getFullPartOfResource(resource);
+        String fullPath = resource.getPath();
         if (fullPath.equals(SLASH_CHARACTER)) {
             return new String[]{
                     SLASH_CHARACTER
@@ -239,7 +215,7 @@ public class ApiGateway extends AWSTools {
      * @return Parent path
      */
     protected String getParentPathOfResource(Resource resource) {
-        String fullPath = getFullPartOfResource(resource);
+        String fullPath = resource.getPath();
         if (fullPath.equals(SLASH_CHARACTER)) {
             return null;
         }
@@ -333,10 +309,11 @@ public class ApiGateway extends AWSTools {
 
     protected String createResource(Resource jerseyResource) {
 
-        com.amazonaws.services.apigateway.model.Resource rootResource = getResourceByPath("/");
+        com.amazonaws.services.apigateway.model.Resource rootResource = getResourceByPath(SLASH_CHARACTER);
         String parentResource = rootResource.getId();
 
         String[] paths = getPathElementsOfResource(jerseyResource);
+        String createdPath = "";
 
         for (String path : paths) {
 
@@ -344,16 +321,20 @@ public class ApiGateway extends AWSTools {
                 continue;
             }
 
+            createdPath += SLASH_CHARACTER + path;
+
             try {
                 CreateResourceRequest createResourceInput = new CreateResourceRequest();
                 createResourceInput.withRestApiId(amazonApi.getId());
                 createResourceInput.withPathPart(path);
                 createResourceInput.withParentId(parentResource);
                 parentResource = getApiGatewayClient().createResource(createResourceInput).getId();
+
             } catch (ConflictException e) {
                 /**
-                 * Resource already exists, do not do nothing
+                 * Resource already exists, only get its id and assign to parentResource
                  */
+                parentResource = getResourceByPath(createdPath).getId();
             }
         }
 
@@ -364,7 +345,7 @@ public class ApiGateway extends AWSTools {
     protected boolean deployResource(Resource jerseyResource) {
 
         com.amazonaws.services.apigateway.model.Resource amazonApiResource;
-        String fullPath = getFullPartOfResource(jerseyResource);
+        String fullPath = jerseyResource.getPath();
 
         if (log != null) {
             log.info("Resource is being created: " + fullPath);

@@ -13,6 +13,8 @@ public final class Resource {
     List<Resource> childResources;
     List<ResourceMethod> resourceMethods;
 
+    private static final String SLASH_CHARACTER = "/";
+
     private final org.glassfish.jersey.server.model.Resource proxied;
 
     private Resource parent;
@@ -50,13 +52,33 @@ public final class Resource {
 
 
     public String getPath() {
-        return proxied.getPath();
+        StringBuilder stringBuilder = new StringBuilder();
+        org.glassfish.jersey.server.model.Resource parentResource = proxied.getParent();
+        stringBuilder.append(proxied.getPath());
+        while (parentResource != null) {
+            stringBuilder.insert(0, parentResource.getPath());
+            parentResource = parentResource.getParent();
+        }
+
+        String normalized = stringBuilder.toString().replace(SLASH_CHARACTER + SLASH_CHARACTER, SLASH_CHARACTER);
+
+        if (normalized.endsWith(SLASH_CHARACTER) && !normalized.equals(SLASH_CHARACTER)) {
+            return normalized.substring(0, normalized.length() - 1);
+        }
+
+        return normalized;
     }
 
     public Resource getParent() {
+
         if (proxied.getParent() == null) {
             return null;
         }
+
+        if (parent != null) {
+            return parent;
+        }
+
         return parent = new Resource(proxied.getParent());
     }
 

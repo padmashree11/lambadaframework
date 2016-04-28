@@ -16,6 +16,16 @@ public class StubHandler {
 
     }
 
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/")
+    public Response getList(@PathParam("id") long id) {
+        return Response.status(200).build();
+    }
+
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

@@ -57,13 +57,19 @@ public class Response implements Serializable {
         return entity;
     }
 
-    @JsonProperty("code")
-    public int getCode() {
-        return code;
+    /**
+     * Returns status code as errorMessage
+     * Why errorMessage? Because API Gateway only detects status code within errorMessage
+     *
+     * @return Status code
+     */
+    @JsonProperty("errorMessage")
+    public String getErrorMessage() {
+        return String.valueOf(code);
     }
 
     @JsonProperty("headers")
-    public  Map<String, String> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 }

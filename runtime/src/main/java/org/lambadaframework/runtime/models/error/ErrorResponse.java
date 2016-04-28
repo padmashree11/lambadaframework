@@ -19,6 +19,7 @@ public class ErrorResponse extends Response {
     }
 
     @JsonProperty("errorMessage")
+    @Override
     public String getErrorMessage() {
         return errorMessage;
     }
