@@ -21,7 +21,7 @@ public class JAXRSParserTest {
     @Test
     public void testScanJar() throws Exception {
         JAXRSParser parser = new JAXRSParser().withJarFile(
-                "../stub-handlers/target/stub-handlers-0.0.4.jar",
+                "../stub-handlers/target/stub-handlers-0.0.5.jar",
                 "org.lambadaframework");
         List<Resource> resourceList = parser.scan();
         assertTrue(resourceList.size() > 0);
