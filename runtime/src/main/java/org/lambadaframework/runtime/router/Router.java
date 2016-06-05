@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.lambadaframework.jaxrs.JAXRSParser;
 import org.lambadaframework.jaxrs.model.Resource;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
-import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.router.types.*;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class Router {
 
-    static final Logger logger = LambdaLogger.getLogger(Router.class);
+    static final Logger logger = Logger.getLogger(Router.class);
 
     private static Router singletonInstance = null;
 

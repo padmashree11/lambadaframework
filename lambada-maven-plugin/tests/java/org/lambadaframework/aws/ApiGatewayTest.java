@@ -46,98 +46,6 @@ public class ApiGatewayTest {
 
 
     @Test
-    public void testCleanUpTrailingEndLeadingSlashes() throws Exception {
-        String functionArn = "testArn";
-        String roleArn = "testArn";
-        ApiGateway apiGateway = new ApiGateway(getMockDeployment(), functionArn, roleArn);
-
-        assertEquals("",
-                ApiGateway.cleanUpTrailingEndLeadingSlashes("/"));
-
-        assertEquals("{id}",
-                ApiGateway.cleanUpTrailingEndLeadingSlashes("{id}"));
-
-
-        assertEquals("{id}",
-                ApiGateway.cleanUpTrailingEndLeadingSlashes("{id}/"));
-
-        assertEquals("{id}",
-                ApiGateway.cleanUpTrailingEndLeadingSlashes("/{id}"));
-    }
-
-    @Test
-    public void testFullPartOfResource() throws Exception {
-        String functionArn = "testArn";
-        String roleArn = "testArn";
-        ApiGateway apiGateway = new ApiGateway(getMockDeployment(), functionArn, roleArn);
-
-
-        final Resource parentMockResource = PowerMock.createMock(Resource.class);
-        expect(parentMockResource.getPath())
-                .andReturn("/")
-                .anyTimes();
-
-        expect(parentMockResource.getParent())
-                .andReturn(null)
-                .anyTimes();
-
-        final Resource mockResource = PowerMock.createMock(Resource.class);
-        expect(mockResource.getPath())
-                .andReturn("{id}")
-                .anyTimes();
-
-        expect(mockResource.getParent())
-                .andReturn(parentMockResource)
-                .anyTimes();
-
-
-        final Resource mockSubResource = PowerMock.createMock(Resource.class);
-
-        expect(mockSubResource.getPath())
-                .andReturn("{id}/info")
-                .anyTimes();
-
-        expect(mockSubResource.getParent())
-                .andReturn(parentMockResource)
-                .anyTimes();
-
-        PowerMock.replayAll();
-
-        assertEquals(ApiGateway.getFullPartOfResource(parentMockResource), "/");
-
-        assertEquals("/{id}", ApiGateway.getFullPartOfResource(mockResource));
-
-        assertEquals("/{id}/info", ApiGateway.getFullPartOfResource(mockSubResource));
-
-
-        final Resource mockParentResource2 = PowerMock.createMock(Resource.class);
-        expect(mockParentResource2.getPath())
-                .andReturn("/resource")
-                .anyTimes();
-
-        expect(mockParentResource2.getParent())
-                .andReturn(null)
-                .anyTimes();
-
-
-        final Resource mockSubResource2 = PowerMock.createMock(Resource.class);
-
-        expect(mockSubResource2.getPath())
-                .andReturn("{id}/info")
-                .anyTimes();
-
-        expect(mockSubResource2.getParent())
-                .andReturn(mockParentResource2)
-                .anyTimes();
-
-        PowerMock.replayAll();
-
-        assertEquals("/resource/{id}/info", ApiGateway.getFullPartOfResource(mockSubResource2));
-
-    }
-
-
-    @Test
     public void testGetPathPartOfResource() throws Exception {
         String functionArn = "testArn";
         String roleArn = "testArn";
@@ -175,24 +83,9 @@ public class ApiGatewayTest {
                 .andReturn("/")
                 .anyTimes();
 
-        expect(mockRootResource.getParent())
-                .andReturn(null)
-                .anyTimes();
-
-        expect(mockParentResource.getPath())
-                .andReturn("/resource1")
-                .anyTimes();
-
-        expect(mockParentResource.getParent())
-                .andReturn(null)
-                .anyTimes();
 
         expect(mockResource.getPath())
-                .andReturn("test/{name}")
-                .anyTimes();
-
-        expect(mockResource.getParent())
-                .andReturn(mockParentResource)
+                .andReturn("/resource1/test/{name}")
                 .anyTimes();
 
 
@@ -209,12 +102,6 @@ public class ApiGatewayTest {
         String[] rootParts = apiGateway.getPathElementsOfResource(mockRootResource);
         assertEquals(1, rootParts.length);
         assertEquals("/", rootParts[0]);
-
-        String[] parentParts = apiGateway.getPathElementsOfResource(mockParentResource);
-        assertEquals(2, parentParts.length);
-        assertEquals("/", parentParts[0]);
-        assertEquals("resource1", parentParts[1]);
-
     }
 
     @Test
@@ -242,7 +129,7 @@ public class ApiGatewayTest {
 
         final Resource mockResource = PowerMock.createMock(Resource.class);
         expect(mockResource.getPath())
-                .andReturn("{id}")
+                .andReturn("/{id}")
                 .anyTimes();
 
         expect(mockResource.getParent())
@@ -253,7 +140,7 @@ public class ApiGatewayTest {
         final Resource mockSubResource = PowerMock.createMock(Resource.class);
 
         expect(mockSubResource.getPath())
-                .andReturn("{id}/info")
+                .andReturn("/{id}/info")
                 .anyTimes();
 
         expect(mockSubResource.getParent())

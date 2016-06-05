@@ -73,7 +73,7 @@ public class LambadaServer extends AbstractMojoPlugin {
 
             resources.forEach(resource -> {
 
-                final String fullPath = ApiGateway.getFullPartOfResource(resource);
+                final String fullPath = resource.getPath();
 
                 resource.getResourceMethods().forEach(resourceMethod -> {
 

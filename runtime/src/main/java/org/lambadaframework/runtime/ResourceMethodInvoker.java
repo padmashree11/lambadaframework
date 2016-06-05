@@ -5,7 +5,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.server.model.Invocable;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
-import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.Request;
 
 import javax.ws.rs.HeaderParam;
@@ -21,7 +20,7 @@ import java.util.List;
 public class ResourceMethodInvoker {
 
 
-    static final Logger logger = LambdaLogger.getLogger(ResourceMethodInvoker.class);
+    static final Logger logger = Logger.getLogger(ResourceMethodInvoker.class);
 
     private ResourceMethodInvoker() {
     }

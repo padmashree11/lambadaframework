@@ -21,14 +21,14 @@ public class RouterTypeTest {
         request.setMethod(Request.RequestMethod.GET);
         request.setConsumes(MediaType.APPLICATION_JSON);
         request.setProduces(MediaType.APPLICATION_JSON);
-        request.setPathtemplate("helloworld/{id}");
+        request.setPathtemplate("/helloworld/{id}");
         return request;
     }
 
     private ResourceMethod getResourceMethod() {
 
         org.glassfish.jersey.server.model.Resource.Builder resourceBuilder = org.glassfish.jersey.server.model.Resource.builder();
-        resourceBuilder.path("helloworld/{id}");
+        resourceBuilder.path("/helloworld/{id}");
         org.glassfish.jersey.server.model.ResourceMethod resourceMethod =
                 resourceBuilder
                         .addMethod("GET")

@@ -2,7 +2,6 @@ package org.lambadaframework.runtime.errorhandling;
 
 
 import org.apache.log4j.Logger;
-import org.lambadaframework.logger.LambdaLogger;
 import org.lambadaframework.runtime.models.error.BadRequestResponse;
 import org.lambadaframework.runtime.models.error.ErrorResponse;
 import org.lambadaframework.runtime.models.error.NotFoundErrorResponse;
@@ -13,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ErrorHandler {
 
-    static final Logger logger = LambdaLogger.getLogger(ErrorHandler.class);
+    static final Logger logger = Logger.getLogger(ErrorHandler.class);
 
     private ErrorHandler() {
     }
