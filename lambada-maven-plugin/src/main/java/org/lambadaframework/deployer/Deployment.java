@@ -2,6 +2,8 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
+
+import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.lambadaframework.aws.S3;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -103,7 +105,7 @@ public class Deployment {
     }
 
     public String getVersion() {
-        return this.project.getVersion();
+        return this.project.getArtifact().getVersion();
     }
 
     public String getStage() {
@@ -160,10 +162,10 @@ public class Deployment {
 
         String bucketKey = this.project.getGroupId().replace(".", seperator) + seperator
                 + this.project.getArtifactId() + seperator
-                + version + seperator
+                + this.project.getArtifact().getBaseVersion() + seperator
                 + this.project.getArtifactId() + "-" + version + ".jar";
 
-        if (version.contains("SNAPSHOT")) {
+        if (this.project.getArtifact().getBaseVersion().contains("SNAPSHOT")) {
             bucketKey = "snapshots/" + bucketKey;
         } else {
             bucketKey = "releases/" + bucketKey;
