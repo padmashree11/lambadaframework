@@ -167,4 +167,4 @@ You might want to look at other projects about serverless architecture:
 
 ## Contributing:
 
-Feel free to send a PR for any contribution. We'll be publishing a Roadmap in the future.
+Feel free to send a PR to `develop` branch for any contribution. We'll be publishing a Roadmap in the future.
