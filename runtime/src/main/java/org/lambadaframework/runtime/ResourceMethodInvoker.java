@@ -2,14 +2,17 @@ package org.lambadaframework.runtime;
 
 
 import com.amazonaws.services.lambda.runtime.Context;
+
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.server.model.Invocable;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.models.Request;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,6 +59,12 @@ public class ResourceMethodInvoker {
 
         List<Object> varargs = new ArrayList<>();
 
+
+        /**
+         * Get consumes annotation from handler method
+         */
+        Consumes consumesAnnotation = method.getAnnotation(Consumes.class);
+
         for (Parameter parameter : method.getParameters()) {
 
             Class<?> parameterClass = parameter.getType();
@@ -95,6 +104,12 @@ public class ResourceMethodInvoker {
                 );
             }
 
+            if (consumesSpecificType(consumesAnnotation, MediaType.APPLICATION_JSON)
+                    && parameter.getType() == String.class) {
+                //Pass raw request body
+                varargs.add(request.getRequestBody());
+            }
+
 
             /**
              * Lambda Context can be automatically injected
@@ -105,5 +120,17 @@ public class ResourceMethodInvoker {
         }
 
         return method.invoke(instance, varargs.toArray());
+    }
+
+    private static boolean consumesSpecificType(Consumes annotation, String type) {
+
+        String[] consumingTypes = annotation.value();
+        for (String consumingType : consumingTypes) {
+            if (type.equals(consumingType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
