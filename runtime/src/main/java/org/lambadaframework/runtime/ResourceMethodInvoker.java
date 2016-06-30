@@ -104,7 +104,7 @@ public class ResourceMethodInvoker {
                 );
             }
 
-            if (consumesSpecificType(consumesAnnotation, MediaType.APPLICATION_JSON)
+            if (consumesAnnotation != null && consumesSpecificType(consumesAnnotation, MediaType.APPLICATION_JSON)
                     && parameter.getType() == String.class) {
                 //Pass raw request body
                 varargs.add(request.getRequestBody());
