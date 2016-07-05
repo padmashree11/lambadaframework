@@ -448,6 +448,7 @@ public class ApiGateway extends AWSTools {
                     .withType(IntegrationType.AWS)
                     .withUri(getFunctionArnForApiGateway())
                     .withIntegrationHttpMethod(INVOCATION_METHOD)
+                    .withPassthroughBehavior("NEVER")
                     .withRequestTemplates(getInputTemplate(method))
                     .withRequestParameters(getRequestParametersIntegration(method))
             );
