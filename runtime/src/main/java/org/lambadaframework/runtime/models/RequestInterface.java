@@ -5,7 +5,11 @@ import java.util.Map;
 
 public interface RequestInterface {
 
-    Request.RequestMethod getMethod();
+    enum RequestMethod {
+        GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
+    }
+
+    RequestMethod getMethod();
 
     String getPathTemplate();
 

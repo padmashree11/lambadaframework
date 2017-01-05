@@ -15,10 +15,6 @@ import java.util.Map;
  */
 public class Request implements Serializable, RequestInterface {
 
-    public enum RequestMethod {
-        GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
-    }
-
     /**
      * Package name
      */
