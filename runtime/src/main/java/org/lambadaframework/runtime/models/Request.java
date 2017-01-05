@@ -13,7 +13,7 @@ import java.util.Map;
  * <p>
  * http://docs.aws.amazon.com/lambda/latest/dg/java-handler-io-type-pojo.html
  */
-public class Request implements Serializable {
+public class Request implements Serializable, RequestInterface {
 
     public enum RequestMethod {
         GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
@@ -77,12 +77,12 @@ public class Request implements Serializable {
         return this;
     }
 
-
+    @Override
     public RequestMethod getMethod() {
         return method;
     }
 
-
+    @Override
     public String getPackage() {
         return packageName;
     }
@@ -93,7 +93,7 @@ public class Request implements Serializable {
         return this;
     }
 
-
+    @Override
     public String getPathTemplate() {
         return pathTemplate;
     }
@@ -104,7 +104,7 @@ public class Request implements Serializable {
         return this;
     }
 
-
+    @Override
     public String getRequestBody() {
         return requestBody;
     }
@@ -115,6 +115,7 @@ public class Request implements Serializable {
         return this;
     }
 
+    @Override
     public MediaType getConsumedMediaType() {
         return consumedMediaType;
     }
@@ -125,7 +126,7 @@ public class Request implements Serializable {
         return this;
     }
 
-
+    @Override
     public MediaType getProducedMediaType() {
         return producedMediaType;
     }
@@ -136,6 +137,7 @@ public class Request implements Serializable {
         return this;
     }
 
+    @Override
     public Map<String, String> getPathParameters() {
         return pathParameters;
     }
@@ -146,6 +148,7 @@ public class Request implements Serializable {
         return this;
     }
 
+    @Override
     public Map<String, String> getQueryParams() {
         return queryParams;
     }
@@ -156,6 +159,7 @@ public class Request implements Serializable {
         return this;
     }
 
+    @Override
     public Map<String, String> getRequestHeaders() {
         return requestHeaders;
     }
