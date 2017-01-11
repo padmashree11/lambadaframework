@@ -4,14 +4,22 @@ import com.amazonaws.services.lambda.runtime.ClientContext;
 import com.amazonaws.services.lambda.runtime.CognitoIdentity;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.MethodHandler;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lambadaframework.runtime.models.Request;
+import org.lambadaframework.runtime.models.RequestInterface;
 import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.router.Router;
 import org.powermock.api.easymock.PowerMock;
@@ -20,6 +28,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
@@ -208,6 +221,57 @@ public class HandlerTest {
     @Test
     public void dummyTest() {
         assertTrue(true);
+    }
+
+    @Test
+    public void testReqParse() throws IOException {
+
+        JsonFactory f = new JsonFactory();
+        JsonParser jp = f.createParser(getJsonStream());
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        
+        RequestInterface req  = null;
+        while (jp.nextToken() == JsonToken.START_OBJECT) {
+            req = mapper.readValue(jp, RequestProxy.class);
+        }
+        jp.close();
+
+        System.out.println("req.getMethod().name() = " + req.getMethod().name());
+
+    }
+
+    private InputStream getJsonStream() {
+        String json = "{\n" +
+                "        \"path\": \"/test/hello\",\n" +
+                "        \"headers\": {\n" +
+                "            \"Accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\",\n" +
+                "            \"Accept-Encoding\": \"gzip, deflate, lzma, sdch, br\",\n" +
+                "            \"Accept-Language\": \"en-US,en;q=0.8\",\n" +
+                "            \"CloudFront-Forwarded-Proto\": \"https\",\n" +
+                "            \"CloudFront-Is-Desktop-Viewer\": \"true\",\n" +
+                "            \"CloudFront-Is-Mobile-Viewer\": \"false\",\n" +
+                "            \"CloudFront-Is-SmartTV-Viewer\": \"false\",\n" +
+                "            \"CloudFront-Is-Tablet-Viewer\": \"false\",\n" +
+                "            \"CloudFront-Viewer-Country\": \"US\",\n" +
+                "            \"Host\": \"wt6mne2s9k.execute-api.us-west-2.amazonaws.com\",\n" +
+                "            \"Upgrade-Insecure-Requests\": \"1\",\n" +
+                "            \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36 OPR/39.0.2256.48\",\n" +
+                "            \"Via\": \"1.1 fb7cca60f0ecd82ce07790c9c5eef16c.cloudfront.net (CloudFront)\",\n" +
+                "            \"X-Amz-Cf-Id\": \"nBsWBOrSHMgnaROZJK1wGCZ9PcRcSpq_oSXZNQwQ10OTZL4cimZo3g==\",\n" +
+                "            \"X-Forwarded-For\": \"192.168.100.1, 192.168.1.1\",\n" +
+                "            \"X-Forwarded-Port\": \"443\",\n" +
+                "            \"X-Forwarded-Proto\": \"https\"\n" +
+                "        },\n" +
+                "        \"pathParameters\": {\"proxy\": \"hello\"},\n" +
+                "        \"httpMethod\": \"GET\",\n" +
+                "        \"queryStringParameters\": {\"name\": \"me\"},\n" +
+                "\"apa\": \"hej\" "+
+                "    }";
+
+        return new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
     }
 
    /* @Test
