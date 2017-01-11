@@ -227,23 +227,21 @@ public class HandlerTest {
     public void testReqParse() throws IOException {
 
         JsonFactory f = new JsonFactory();
-        JsonParser jp = f.createParser(getJsonStream());
+        JsonParser jp = f.createParser(getJsonAsInputStream());
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        
-        RequestInterface req  = null;
-        while (jp.nextToken() == JsonToken.START_OBJECT) {
-            req = mapper.readValue(jp, RequestProxy.class);
-        }
+        RequestInterface req = mapper.readValue(jp, RequestProxy.class);
         jp.close();
 
         System.out.println("req.getMethod().name() = " + req.getMethod().name());
+        System.out.println("req.getMethod().name() = " + req.getPathTemplate());
+        //TODO: Do real asserts if we should keep test.
 
     }
 
-    private InputStream getJsonStream() {
+    private InputStream getJsonAsInputStream() {
         String json = "{\n" +
                 "        \"path\": \"/test/hello\",\n" +
                 "        \"headers\": {\n" +
