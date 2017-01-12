@@ -74,14 +74,9 @@ public class RequestProxy implements Serializable, RequestInterface {
 
     @Override
     public String getPackage() {
-        return "se.simonsoft.review.rest";
+        this.packageName =  System.getenv("PackageNameRest");
+        return this.packageName;
     }
-
-//    @JsonProperty("package")
-//    public RequestProxy setPackage(String packageName) {
-//        this.packageName = packageName;
-//        return this;
-//    }
 
     @Override
     public String getPathTemplate() {
