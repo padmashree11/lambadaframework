@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -75,7 +76,14 @@ public class Handler implements RequestStreamHandler {
                 ResourceMethod matchedResourceMethod = getRouter().route(req);
                 invoke = ResourceMethodInvoker.invoke(matchedResourceMethod, req, context);
                 Response response = Response.buildFromJAXRSResponse(invoke);
-                //TODO: write a response.
+                logger.debug("Handler received a response: " + response.getEntity().toString());
+
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
+                String res = parseResponse(response).toJSONString();
+                logger.debug("Parsed response: " + res);
+                writer.write(res);
+                logger.debug("Reponse should have been written.");
+                writer.close();
 
             }
 
@@ -84,6 +92,37 @@ public class Handler implements RequestStreamHandler {
             ErrorHandler.getErrorResponse(e);
         }
 
+    }
+
+    private JSONObject parseResponse(Response response) throws Exception{
+
+
+        logger.debug("Starting to parse response to JSON");
+        JSONObject responseJson = new JSONObject();
+        logger.debug("1");
+        JSONObject responseBody = new JSONObject();
+        //responseBody.put("input", response.getEntity().toString());
+        responseBody.put("input", "apskaft");
+        responseBody.put("data", "Hello world");
+        logger.debug("2");
+
+        JSONObject headerJson = new JSONObject();
+        headerJson.put("x-custom-response-header", "my custom response header value");
+
+        logger.debug("3");
+        logger.debug("size: " + response.getHeaders().keySet().size());
+        for(String key: response.getHeaders().keySet()) {
+            logger.debug("4");
+            String val = response.getHeaders().get(key);
+            logger.debug("response headers key: " + key + " value: " + val);
+            headerJson.put(key, val);
+        }
+        logger.debug("5");
+        responseJson.put("statusCode", "200");
+        responseJson.put("headers", headerJson);
+        responseJson.put("body", responseBody);
+        logger.debug("6");
+        return responseJson;
     }
 
 
