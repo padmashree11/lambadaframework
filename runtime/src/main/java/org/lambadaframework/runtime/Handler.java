@@ -101,10 +101,17 @@ public class Handler implements RequestStreamHandler {
 
         try {
             JsonParser jp = new JsonFactory().createParser(inputStream);
-            RequestInterface req = getConfiguredMapper().readValue(jp, RequestProxy.class);
-            logger.debug("Parsed input stream to Request object");
-            logger.debug("Closing parser");
+            RequestInterface req = null;
+
+            ObjectMapper configuredMapper = getConfiguredMapper();
+            //Can't handle if stream starts with array.
+            while (jp.nextToken() == JsonToken.START_OBJECT) {
+                req = configuredMapper.readValue(jp, RequestProxy.class);
+                logger.debug("Parsed input stream to Request object");
+            }
+
             jp.close();
+            inputStream.close();
             return req;
 
         } catch (IOException e) {
@@ -115,5 +122,4 @@ public class Handler implements RequestStreamHandler {
 
         return null;
     }
-
 }
