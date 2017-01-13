@@ -66,8 +66,8 @@ public class Handler implements RequestStreamHandler {
 
         Object invoke;
         try {
-            RequestInterface req = getParsedRequest(inputStream);
 
+            RequestInterface req = getParsedRequest(inputStream);
             if (req == null) {
                 logger.debug("Request object is null can not proceed with request.");
             } else {
@@ -87,6 +87,8 @@ public class Handler implements RequestStreamHandler {
         } catch (Exception e) {
             logger.debug("Error: " + e.getMessage());
             ErrorHandler.getErrorResponse(e);
+        } catch (Error e) {
+            logger.debug("Error: " + e.getMessage());
         }
     }
 
