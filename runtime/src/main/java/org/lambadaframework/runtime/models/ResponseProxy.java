@@ -56,8 +56,7 @@ public class ResponseProxy implements Serializable {
             outputResponse.entity = response;
         }
 
-        writer.write(marshallToJsonString(outputResponse));
-        writer.close();
+        outputResponse.write(writer);
     }
 
     @JsonProperty("body")
@@ -75,8 +74,9 @@ public class ResponseProxy implements Serializable {
         return this.code;
     }
 
-    private static String marshallToJsonString(ResponseProxy response) throws IOException {
-        logger.debug("Marshalling Response to JSON String");
-        return new ObjectMapper().writeValueAsString(response);
+    private void write(Writer writer) throws IOException {
+        new ObjectMapper().writeValue(writer, this);
+        writer.close();
     }
+
 }
