@@ -1,7 +1,6 @@
 package org.lambadaframework.runtime;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -9,26 +8,20 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
 import org.lambadaframework.runtime.models.RequestInterface;
-import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.models.ResponseProxy;
 import org.lambadaframework.runtime.router.Router;
 
-import java.io.*;
-import java.util.Map;
-import java.util.Set;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 
 public class Handler implements RequestStreamHandler {
 
     static final Logger logger = Logger.getLogger(Handler.class);
-    JSONParser parser = new JSONParser();
 
     private Router router;
 
