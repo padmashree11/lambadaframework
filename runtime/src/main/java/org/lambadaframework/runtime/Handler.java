@@ -17,6 +17,7 @@ import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
 import org.lambadaframework.runtime.models.RequestInterface;
 import org.lambadaframework.runtime.models.Response;
+import org.lambadaframework.runtime.models.ResponseProxy;
 import org.lambadaframework.runtime.router.Router;
 
 import java.io.*;
@@ -75,14 +76,10 @@ public class Handler implements RequestStreamHandler {
                 logger.debug("Request check is ok.");
                 ResourceMethod matchedResourceMethod = getRouter().route(req);
                 invoke = ResourceMethodInvoker.invoke(matchedResourceMethod, req, context);
-                Response response = Response.buildFromJAXRSResponse(invoke);
-                logger.debug("Handler received a response: " + response.getEntity().toString());
 
                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-                String res = responseToJson(response).toJSONString();
-                logger.debug("Json formated Response: " + res);
-                writer.write(res);
-                writer.close();
+                ResponseProxy.buildAndWriteFromJAXRSResponse(invoke, writer);
+
             }
         } catch (Exception e) {
             logger.debug("Error: " + e.getMessage());
@@ -90,21 +87,6 @@ public class Handler implements RequestStreamHandler {
         } catch (Error e) {
             logger.debug("Error: " + e.getMessage());
         }
-    }
-
-    private JSONObject responseToJson(Response response) throws Exception{
-
-        JSONObject headers = new JSONObject();
-        for(String key: response.getHeaders().keySet()) {
-            headers.put(key, response.getHeaders().get(key));
-        }
-
-        JSONObject responseJson = new JSONObject();
-        responseJson.put("statusCode", "200");
-        responseJson.put("headers", headers);
-        responseJson.put("body", response.getEntity().toString());
-
-        return responseJson;
     }
 
 
