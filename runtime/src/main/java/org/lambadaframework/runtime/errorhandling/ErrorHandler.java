@@ -21,14 +21,11 @@ public class ErrorHandler {
         try {
             throw e;
         } catch (InvocationTargetException ex) {
-            throw new RuntimeException(new BadRequestResponse().getErrorMessage());
-//            return new BadRequestResponse();
+            return new BadRequestResponse();
         } catch (NotFoundException ex) {
-            throw new RuntimeException(new NotFoundErrorResponse().getErrorMessage());
-//            return new NotFoundErrorResponse("Page not found");
+            return new NotFoundErrorResponse("Page not found");
         } catch (Exception ex) {
-            throw new RuntimeException(new ErrorResponse().getErrorMessage());
-//            return new ErrorResponse();
+            return new ErrorResponse();
         } finally {
             logger.debug("Exception occured:", e);
         }
