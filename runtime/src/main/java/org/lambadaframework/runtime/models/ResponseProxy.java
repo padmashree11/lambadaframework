@@ -33,33 +33,6 @@ public class ResponseProxy implements Serializable {
      */
     protected Object entity;
 
-
-    public static ResponseProxy buildFromJAXRSResponse(Object response) throws RuntimeException {
-
-        ResponseProxy outputResponse = new ResponseProxy();
-
-        if (response instanceof javax.ws.rs.core.Response) {
-
-            javax.ws.rs.core.Response JAXResponse = ((javax.ws.rs.core.Response) response);
-
-            int status = JAXResponse.getStatus();
-
-            outputResponse.entity = JAXResponse.getEntity();
-            outputResponse.code = status;
-            outputResponse.headers = new LinkedHashMap<>();
-
-            for (Map.Entry<String, List<Object>> entry : JAXResponse.getHeaders().entrySet()) {
-                outputResponse.headers.put(entry.getKey(), (String) entry.getValue().get(0));
-            }
-
-
-        } else {
-            outputResponse.entity = response;
-        }
-
-        return outputResponse;
-    }
-
     public static void buildAndWriteFromJAXRSResponse(Object response, Writer writer) throws RuntimeException, IOException {
 
         ResponseProxy outputResponse = new ResponseProxy();
