@@ -2,11 +2,9 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
-
-import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
-import org.lambadaframework.aws.S3;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.lambadaframework.aws.S3;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -18,7 +16,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
 
 public class Deployment {
 
@@ -36,6 +37,7 @@ public class Deployment {
     protected MavenProject project;
 
     private static final String deploymentBucketPropertyName = "deployment.bucket";
+    public static final String deploymentS3KeyTemplatePropertyName = "deployment.template.key";
 
     public static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
     public static final int LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE = 3;
@@ -57,6 +59,10 @@ public class Deployment {
 
     public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
 
+    public String S3_DEPLOYMENT_TEMPLATE_URL = null;
+
+    public static final String cloudformationRoleARN = "";
+
 
     protected Log log;
 
@@ -72,6 +78,7 @@ public class Deployment {
         this.stage = stage;
 
         setDefaultParameters();
+        setS3DeploymentTemplateUrl();
     }
 
     public void setLog(Log log) {
@@ -94,7 +101,10 @@ public class Deployment {
 
         properties.setProperty(S3_DEPLOYMENT_BUCKET_KEY, getBucketName());
         properties.setProperty(S3_DEPLOYMENT_KEY_KEY, getJarFileLocationOnS3(getVersion()));
+        //TODO: Do we need to set it as a property, do not think so?
+//        properties.setProperty(S3_DEPLOYMENT_TEMPLATE_KEY, getS3TemplateKey());
         properties.setProperty(LAMBDA_DESCRIPTION_KEY, getLambdaDescription());
+
 
         if (properties.getProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY) == null) {
             properties.setProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY, Integer.toString(LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE));
@@ -227,4 +237,33 @@ public class Deployment {
     public String getLambdaDescription() {
         return "Lambada function for " + project.getName();
     }
+
+    private String getS3TemplateKey() {
+        return this.project.getProperties().getProperty(deploymentS3KeyTemplatePropertyName);
+    }
+
+    private void setS3DeploymentTemplateUrl() {
+
+        String key = this.getS3TemplateKey();
+        String bucketName = this.getBucketName();
+        if ((bucketName == null) && (key == null)) {
+            log.info("Template URL will be set to null bucket name: " + bucketName + " and or key: " + key + " is null");
+            this.S3_DEPLOYMENT_TEMPLATE_URL = null;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://s3-eu-west-1.amazonaws.com/");
+            sb.append(bucketName);
+            sb.append("/");
+            sb.append(key);
+            this.S3_DEPLOYMENT_TEMPLATE_URL = sb.toString();
+        }
+    }
+
+    public String getS3TemplateUrl() {
+        return this.S3_DEPLOYMENT_TEMPLATE_URL;
+    }
+
+    //https://mybucket.s3-eu-west-1.amazonaws.com/myfilename
+    //https://mybucket.s3.amazonaws.com/myfilename
+    //https://s3-eu-west-1.amazonaws.com/jonathan-lambada-test/snapshots/se/simonsoft/review/review-rest/1.0.0-SNAPSHOT/review-rest-1.0.0-20170113.082208-71.jar
 }
