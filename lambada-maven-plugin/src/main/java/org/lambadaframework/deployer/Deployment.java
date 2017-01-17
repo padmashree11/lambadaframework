@@ -2,11 +2,9 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
-
-import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
-import org.lambadaframework.aws.S3;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.lambadaframework.aws.S3;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -18,7 +16,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
 
 public class Deployment {
 
@@ -30,13 +31,15 @@ public class Deployment {
 
     protected String region;
 
+    protected String bucket;
+
+    protected String deploymentS3KeyTemplate;
 
     protected Properties properties;
 
     protected MavenProject project;
 
     private static final String deploymentBucketPropertyName = "deployment.bucket";
-
     public static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
     public static final int LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE = 3;
 
@@ -57,6 +60,8 @@ public class Deployment {
 
     public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
 
+    public static final String cloudformationRoleARN = "";
+
 
     protected Log log;
 
@@ -64,12 +69,16 @@ public class Deployment {
                       String packageName,
                       Properties properties,
                       String region,
-                      String stage) {
+                      String stage,
+                      String bucket,
+                      String deploymentS3KeyTemplate) {
         this.project = project;
         this.packageName = packageName;
         this.region = region;
         this.properties = properties;
         this.stage = stage;
+        this.bucket = bucket;
+        this.deploymentS3KeyTemplate = deploymentS3KeyTemplate;
 
         setDefaultParameters();
     }
@@ -95,6 +104,7 @@ public class Deployment {
         properties.setProperty(S3_DEPLOYMENT_BUCKET_KEY, getBucketName());
         properties.setProperty(S3_DEPLOYMENT_KEY_KEY, getJarFileLocationOnS3(getVersion()));
         properties.setProperty(LAMBDA_DESCRIPTION_KEY, getLambdaDescription());
+
 
         if (properties.getProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY) == null) {
             properties.setProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY, Integer.toString(LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE));
@@ -144,11 +154,7 @@ public class Deployment {
     }
 
     public String getBucketName() {
-        String bucketName = this.project.getProperties().getProperty(deploymentBucketPropertyName);
-        if (bucketName == null) {
-            throw new RuntimeException("Deployment bucket name could not be found in pom.xml. Aborting.");
-        }
-        return bucketName;
+        return this.bucket;
     }
 
     /**
@@ -227,4 +233,22 @@ public class Deployment {
     public String getLambdaDescription() {
         return "Lambada function for " + project.getName();
     }
+
+    public String getS3TemplateUrl() {
+
+        String key = this.deploymentS3KeyTemplate;
+        String bucketName = this.getBucketName();
+        if ((bucketName == null) || (key == null)) {
+            return null;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://s3-eu-west-1.amazonaws.com/");
+            sb.append(bucketName);
+            sb.append("/");
+            sb.append(key);
+            return sb.toString();
+        }
+
+    }
+
 }

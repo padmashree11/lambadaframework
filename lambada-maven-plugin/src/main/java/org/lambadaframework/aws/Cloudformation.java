@@ -449,7 +449,17 @@ public class Cloudformation extends AWSTools {
         String templateName = deployment.getCloudFormationStackName();
         CreateStackRequest createRequest = new CreateStackRequest();
         createRequest.setStackName(templateName);
-        createRequest.setTemplateBody(templateBody);
+
+        String s3TemplateUrl = deployment.getS3TemplateUrl();
+        if (s3TemplateUrl != null) {
+
+            log.info("Template url is provided, will use template uploaded at: " + s3TemplateUrl);
+            createRequest.setTemplateURL(s3TemplateUrl);
+        } else {
+            log.info("Template url is not provided will use pre-defined template");
+            createRequest.setTemplateBody(templateBody);
+        }
+
         createRequest.setParameters(deployment.getCloudFormationParameters());
         createRequest.withCapabilities(Capability.CAPABILITY_IAM);
         getCloudFormationClient().createStack(createRequest);

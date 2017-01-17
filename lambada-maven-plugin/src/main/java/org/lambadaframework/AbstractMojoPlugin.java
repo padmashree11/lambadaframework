@@ -26,6 +26,12 @@ public abstract class AbstractMojoPlugin extends AbstractMojo {
     @Parameter(required = true)
     public String regionToDeploy;
 
+    @Parameter(required = true)
+    public String bucket;
+
+    @Parameter(required = true)
+    public String deploymentS3KeyTemplate;
+
     /**
      * Specifies the maximum execution time allowed for Lambda function (seconds)
      */
@@ -99,7 +105,9 @@ public abstract class AbstractMojoPlugin extends AbstractMojo {
                 packageName,
                 cloudFormationParameters,
                 regionToDeploy,
-                stageToDeploy);
+                stageToDeploy,
+                bucket,
+                deploymentS3KeyTemplate);
 
         deployment.setLog(getLog());
 
