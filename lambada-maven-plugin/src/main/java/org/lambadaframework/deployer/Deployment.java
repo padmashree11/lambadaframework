@@ -31,14 +31,15 @@ public class Deployment {
 
     protected String region;
 
+    protected String bucket;
+
+    protected String deploymentS3KeyTemplate;
 
     protected Properties properties;
 
     protected MavenProject project;
 
     private static final String deploymentBucketPropertyName = "deployment.bucket";
-    public static final String deploymentS3KeyTemplatePropertyName = "deployment.template.key";
-
     public static final String LAMBDA_MAXIMUM_EXECUTION_TIME_KEY = "LambdaMaximumExecutionTime";
     public static final int LAMBDA_MAXIMUM_EXECUTION_TIME_DEFAULT_VALUE = 3;
 
@@ -59,8 +60,6 @@ public class Deployment {
 
     public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
 
-    public String S3_DEPLOYMENT_TEMPLATE_URL = null;
-
     public static final String cloudformationRoleARN = "";
 
 
@@ -70,15 +69,18 @@ public class Deployment {
                       String packageName,
                       Properties properties,
                       String region,
-                      String stage) {
+                      String stage,
+                      String bucket,
+                      String deploymentS3KeyTemplate) {
         this.project = project;
         this.packageName = packageName;
         this.region = region;
         this.properties = properties;
         this.stage = stage;
+        this.bucket = bucket;
+        this.deploymentS3KeyTemplate = deploymentS3KeyTemplate;
 
         setDefaultParameters();
-        setS3DeploymentTemplateUrl();
     }
 
     public void setLog(Log log) {
@@ -101,8 +103,6 @@ public class Deployment {
 
         properties.setProperty(S3_DEPLOYMENT_BUCKET_KEY, getBucketName());
         properties.setProperty(S3_DEPLOYMENT_KEY_KEY, getJarFileLocationOnS3(getVersion()));
-        //TODO: Do we need to set it as a property, do not think so?
-//        properties.setProperty(S3_DEPLOYMENT_TEMPLATE_KEY, getS3TemplateKey());
         properties.setProperty(LAMBDA_DESCRIPTION_KEY, getLambdaDescription());
 
 
@@ -154,11 +154,7 @@ public class Deployment {
     }
 
     public String getBucketName() {
-        String bucketName = this.project.getProperties().getProperty(deploymentBucketPropertyName);
-        if (bucketName == null) {
-            throw new RuntimeException("Deployment bucket name could not be found in pom.xml. Aborting.");
-        }
-        return bucketName;
+        return this.bucket;
     }
 
     /**
@@ -238,32 +234,21 @@ public class Deployment {
         return "Lambada function for " + project.getName();
     }
 
-    private String getS3TemplateKey() {
-        return this.project.getProperties().getProperty(deploymentS3KeyTemplatePropertyName);
-    }
+    public String getS3TemplateUrl() {
 
-    private void setS3DeploymentTemplateUrl() {
-
-        String key = this.getS3TemplateKey();
+        String key = this.deploymentS3KeyTemplate;
         String bucketName = this.getBucketName();
-        if ((bucketName == null) && (key == null)) {
-            log.info("Template URL will be set to null bucket name: " + bucketName + " and or key: " + key + " is null");
-            this.S3_DEPLOYMENT_TEMPLATE_URL = null;
+        if ((bucketName == null) || (key == null)) {
+            return null;
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append("https://s3-eu-west-1.amazonaws.com/");
             sb.append(bucketName);
             sb.append("/");
             sb.append(key);
-            this.S3_DEPLOYMENT_TEMPLATE_URL = sb.toString();
+            return sb.toString();
         }
+
     }
 
-    public String getS3TemplateUrl() {
-        return this.S3_DEPLOYMENT_TEMPLATE_URL;
-    }
-
-    //https://mybucket.s3-eu-west-1.amazonaws.com/myfilename
-    //https://mybucket.s3.amazonaws.com/myfilename
-    //https://s3-eu-west-1.amazonaws.com/jonathan-lambada-test/snapshots/se/simonsoft/review/review-rest/1.0.0-SNAPSHOT/review-rest-1.0.0-20170113.082208-71.jar
 }
