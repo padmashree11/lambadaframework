@@ -226,7 +226,6 @@ public class HandlerTest {
 
         assertEquals("GET", req.getMethod().name());
         assertEquals("/test/hello", req.getPathTemplate());
-        assertEquals("hello",req.getPathParameters().get("proxy"));
         assertEquals("me", req.getQueryParams().get("name"));
     }
 

@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.lambadaframework</groupId>
+    <groupId>se.simonsoft.lambadaframework</groupId>
     <artifactId>lambada</artifactId>
-    <version>0.0.6-PROXY</version>
+    <version>0.8.0</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
