@@ -72,10 +72,11 @@ public class Handler implements RequestStreamHandler {
 
                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
                 ResponseProxy.buildAndWriteFromJAXRSResponse(invoke, writer);
+                outputStream.close();
 
             }
         } catch (Exception e) {
-            logger.debug("Error: " + e.getMessage());
+            logger.debug("Exception: " + e.getMessage());
             ErrorHandler.getErrorResponse(e);
         } catch (Error e) {
             logger.debug("Error: " + e.getMessage());
