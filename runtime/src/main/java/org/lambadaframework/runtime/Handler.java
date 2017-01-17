@@ -1,6 +1,7 @@
 package org.lambadaframework.runtime;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -22,7 +23,6 @@ import java.io.OutputStreamWriter;
 public class Handler implements RequestStreamHandler {
 
     static final Logger logger = Logger.getLogger(Handler.class);
-
     private Router router;
 
 
@@ -93,7 +93,7 @@ public class Handler implements RequestStreamHandler {
         return mapper;
     }
 
-    private RequestInterface getParsedRequest(InputStream inputStream) throws Exception {
+    protected RequestInterface getParsedRequest(InputStream inputStream) throws Exception {
         logger.debug("Starting to parse request stream");
 
         JsonParser jp = new JsonFactory().createParser(inputStream);

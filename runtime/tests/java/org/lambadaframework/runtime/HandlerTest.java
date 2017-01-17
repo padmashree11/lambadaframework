@@ -4,23 +4,18 @@ import com.amazonaws.services.lambda.runtime.ClientContext;
 import com.amazonaws.services.lambda.runtime.CognitoIdentity;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.MethodHandler;
 import org.glassfish.jersey.server.model.ResourceMethod;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lambadaframework.runtime.models.Request;
 import org.lambadaframework.runtime.models.RequestInterface;
-import org.lambadaframework.runtime.models.Response;
 import org.lambadaframework.runtime.router.Router;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -28,16 +23,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Invocable.class, ResourceMethod.class, Router.class, org.lambadaframework.jaxrs.model.ResourceMethod.class})
@@ -224,20 +216,45 @@ public class HandlerTest {
     }
 
     @Test
-    public void testReqParse() throws IOException {
+    public void testParseRequestWithJacksson() throws Exception {
 
-        JsonFactory f = new JsonFactory();
-        JsonParser jp = f.createParser(getJsonAsInputStream());
-        ObjectMapper mapper = new ObjectMapper();
+        InputStream jsonAsInputStream = getJsonAsInputStream();
+        loggInput(jsonAsInputStream);
 
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        Handler handler = new Handler();
+        RequestInterface req = handler.getParsedRequest(jsonAsInputStream);
 
-        RequestInterface req = mapper.readValue(jp, RequestProxy.class);
-        jp.close();
+        assertEquals("GET", req.getMethod().name());
+        assertEquals("/test/hello", req.getPathTemplate());
+        assertEquals("hello",req.getPathParameters().get("proxy"));
+        assertEquals("me", req.getQueryParams().get("name"));
+    }
 
-        System.out.println("req.getMethod().name() = " + req.getMethod().name());
-        System.out.println("req.getMethod().name() = " + req.getPathTemplate());
-        //TODO: Do real asserts if we should keep test.
+    private JSONObject parseResponse(String json) {
+
+        JSONObject responseJson = new JSONObject();
+
+        JSONObject responseBody = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add(json);
+        responseBody.put("input", jsonArray);
+        responseJson.put("body", responseBody);
+
+        return responseBody;
+    }
+
+    private void loggInput(InputStream inputStream) {
+
+        JSONParser parser = new JSONParser();
+        try {
+            final JSONObject parse = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+            inputStream.reset();
+            System.out.println("parse = " + parse);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
@@ -263,63 +280,38 @@ public class HandlerTest {
                 "            \"X-Forwarded-Port\": \"443\",\n" +
                 "            \"X-Forwarded-Proto\": \"https\"\n" +
                 "        },\n" +
-                "        \"pathParameters\": {\"proxy\": \"hello\"},\n" +
+                "        \"pathParameters\": {\"id\": \"1234\"},\n" +
                 "        \"httpMethod\": \"GET\",\n" +
-                "        \"queryStringParameters\": {\"name\": \"me\"},\n" +
-                "\"apa\": \"hej\" "+
+                "        \"queryStringParameters\": {\"name\": \"me\"} \n" +
                 "    }";
 
         return new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
     }
 
-   /* @Test
+    @Test
     public void testWith200Result()
             throws Exception {
 
-        Request exampleRequest = getRequest("{\n" +
-                "  \"package\": \"org.lambadaframework\",\n" +
-                "  \"pathTemplate\": \"/{id}\",\n" +
-                "  \"method\": \"GET\",\n" +
-                "  \"requestBody\": \"{}\",\n" +
-                "  \"path\": {\n" +
-                "    \"id\": \"123\"\n" +
-                "  },\n" +
-                "  \"querystring\": {\n" +
-                "        \"query1\": \"test3\",\n" +
-                "    \"query2\": \"test\"\n" +
-                "  },\n" +
-                "  \"header\": {}\n" +
-                "}");
 
         Handler handler = new Handler();
         handler.setRouter(getMockRouter("getEntity", long.class));
-        Response response = handler.handleRequest(exampleRequest, getContext());
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
 
-        assertEquals("200", response.getErrorMessage());
-        assertEquals("cagatay gurturk", ((Entity) response.getEntity()).query1);
-        assertEquals(123, ((Entity) response.getEntity()).id);
+
+        handler.handleRequest(getJsonAsInputStream(), boas, getContext());
+
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(boas.toString());
+        JSONObject body = (JSONObject) json.get("body");
+        assertEquals(1234L, body.get("id"));
+        assertEquals("cagatay gurturk", body.get("query1"));
 
     }
 
-
+/*
     @Test
     public void testWith201Result()
             throws Exception {
-
-        Request exampleRequest = getRequest("{\n" +
-                "  \"package\": \"org.lambadaframework\",\n" +
-                "  \"pathTemplate\": \"/{id}/jsonstring\",\n" +
-                "  \"method\": \"POST\",\n" +
-                "  \"requestBody\": \"{}\",\n" +
-                "  \"path\": {\n" +
-                "    \"id\": \"123\"\n" +
-                "  },\n" +
-                "  \"querystring\": {\n" +
-                "        \"query1\": \"test3\",\n" +
-                "    \"query2\": \"test\"\n" +
-                "  },\n" +
-                "  \"header\": {}\n" +
-                "}");
 
 
         Handler handler = new Handler();
