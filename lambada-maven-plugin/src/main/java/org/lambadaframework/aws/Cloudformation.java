@@ -487,7 +487,6 @@ public class Cloudformation extends AWSTools {
             updateStackRequest.setTemplateBody(templateBody);
         }
 
-        updateStackRequest.setTemplateBody(templateBody);
         updateStackRequest.setParameters(deployment.getCloudFormationParameters());
 
         String role = deployment.getRoleARN();
