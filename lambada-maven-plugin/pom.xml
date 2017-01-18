@@ -4,15 +4,11 @@
     <parent>
         <groupId>se.simonsoft.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
-        <version>0.8.0</version>
+        <version>0.8.1</version>
     </parent>
 
     <artifactId>lambada-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-
-    <properties>
-        <aws-sdk.version>1.11.9</aws-sdk.version>
-    </properties>
 
     <name>Lambada Deploying Plugin</name>
 
@@ -83,6 +79,11 @@
             <groupId>se.simonsoft.lambadaframework</groupId>
             <artifactId>jax-rs-extractor</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-iam</artifactId>
+            <version>1.11.13</version>
         </dependency>
     </dependencies>
     <build>

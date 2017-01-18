@@ -2,6 +2,9 @@ package org.lambadaframework.deployer;
 
 
 import com.amazonaws.services.cloudformation.model.Parameter;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.model.GetUserRequest;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.lambadaframework.aws.S3;
@@ -24,6 +27,8 @@ import java.util.Properties;
 public class Deployment {
 
     private static String seperator = "/";
+
+    protected String cloudFormationRoleName;
 
     protected String packageName;
 
@@ -57,10 +62,9 @@ public class Deployment {
     public static final String S3_DEPLOYMENT_KEY_KEY = "DeploymentS3Key";
     public static final String LAMBDA_HANDLER_KEY = "LambdaHandler";
     public static final String LAMBDA_HANDLER_DEFAULT_VALUE = "org.lambadaframework.runtime.Handler";
+    public static final String STAGE_KEY = "Stage";
 
     public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
-
-    public static final String cloudformationRoleARN = "";
 
 
     protected Log log;
@@ -71,7 +75,7 @@ public class Deployment {
                       String region,
                       String stage,
                       String bucket,
-                      String deploymentS3KeyTemplate) {
+                      String deploymentS3KeyTemplate, String cloudformationRoleName) {
         this.project = project;
         this.packageName = packageName;
         this.region = region;
@@ -79,6 +83,7 @@ public class Deployment {
         this.stage = stage;
         this.bucket = bucket;
         this.deploymentS3KeyTemplate = deploymentS3KeyTemplate;
+        this.cloudFormationRoleName = cloudformationRoleName;
 
         setDefaultParameters();
     }
@@ -104,6 +109,7 @@ public class Deployment {
         properties.setProperty(S3_DEPLOYMENT_BUCKET_KEY, getBucketName());
         properties.setProperty(S3_DEPLOYMENT_KEY_KEY, getJarFileLocationOnS3(getVersion()));
         properties.setProperty(LAMBDA_DESCRIPTION_KEY, getLambdaDescription());
+        properties.setProperty(STAGE_KEY, getStage());
 
 
         if (properties.getProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY) == null) {
@@ -117,6 +123,8 @@ public class Deployment {
         if (properties.getProperty(LAMBDA_HANDLER_KEY) == null) {
             properties.setProperty(LAMBDA_HANDLER_KEY, LAMBDA_HANDLER_DEFAULT_VALUE);
         }
+
+
     }
 
     public String getVersion() {
@@ -250,5 +258,34 @@ public class Deployment {
         }
 
     }
+
+    public String getCloudFormationRoleName() {
+        return this.cloudFormationRoleName;
+    }
+
+    public String getAccountId() {
+
+        GetUserResult user = new AmazonIdentityManagementClient().getUser(new GetUserRequest());
+        String[] arnParts = user.getUser().getArn().split(":");
+        log.debug("AccountID parsed from ARN: " + arnParts[4]);
+        return arnParts[4];
+    }
+
+    public String getRoleARN() {
+
+        String role = null;
+        if (this.cloudFormationRoleName != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("arn:aws:iam::");
+            sb.append(getAccountId());
+            sb.append(":");
+            sb.append("role/");
+            sb.append(this.cloudFormationRoleName);
+            role = sb.toString();
+        }
+
+        return role;
+    }
+
 
 }
