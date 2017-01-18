@@ -5,7 +5,7 @@
 
     <groupId>se.simonsoft.lambadaframework</groupId>
     <artifactId>lambada</artifactId>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
