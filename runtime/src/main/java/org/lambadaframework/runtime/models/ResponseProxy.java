@@ -46,6 +46,7 @@ public class ResponseProxy implements Serializable {
             outputResponse.entity = JAXResponse.getEntity();
             outputResponse.code = status;
             outputResponse.headers = new LinkedHashMap<>();
+            outputResponse.setCors();
 
             for (Map.Entry<String, List<Object>> entry : JAXResponse.getHeaders().entrySet()) {
                 outputResponse.headers.put(entry.getKey(), (String) entry.getValue().get(0));
@@ -57,6 +58,10 @@ public class ResponseProxy implements Serializable {
         }
 
         outputResponse.write(writer);
+    }
+
+    public void setCors() {
+        headers.put("Access-Control-Allow-Origin", "'*'");
     }
 
     @JsonProperty("body")
