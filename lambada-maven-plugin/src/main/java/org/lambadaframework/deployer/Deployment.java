@@ -62,6 +62,7 @@ public class Deployment {
     public static final String S3_DEPLOYMENT_KEY_KEY = "DeploymentS3Key";
     public static final String LAMBDA_HANDLER_KEY = "LambdaHandler";
     public static final String LAMBDA_HANDLER_DEFAULT_VALUE = "org.lambadaframework.runtime.Handler";
+    public static final String STAGE_KEY = "Stage";
 
     public static final String LAMBDA_DESCRIPTION_KEY = "LambdaDescription";
 
@@ -108,6 +109,7 @@ public class Deployment {
         properties.setProperty(S3_DEPLOYMENT_BUCKET_KEY, getBucketName());
         properties.setProperty(S3_DEPLOYMENT_KEY_KEY, getJarFileLocationOnS3(getVersion()));
         properties.setProperty(LAMBDA_DESCRIPTION_KEY, getLambdaDescription());
+        properties.setProperty(STAGE_KEY, getStage());
 
 
         if (properties.getProperty(LAMBDA_MAXIMUM_EXECUTION_TIME_KEY) == null) {
