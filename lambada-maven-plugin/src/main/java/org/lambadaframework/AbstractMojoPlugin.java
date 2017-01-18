@@ -112,7 +112,8 @@ public abstract class AbstractMojoPlugin extends AbstractMojo {
                 regionToDeploy,
                 stageToDeploy,
                 bucket,
-                deploymentS3KeyTemplate);
+                deploymentS3KeyTemplate,
+                cloudformationRoleName);
 
         deployment.setLog(getLog());
 

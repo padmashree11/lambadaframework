@@ -71,7 +71,7 @@ public class Deployment {
                       String region,
                       String stage,
                       String bucket,
-                      String deploymentS3KeyTemplate) {
+                      String deploymentS3KeyTemplate, String cloudformationRoleName) {
         this.project = project;
         this.packageName = packageName;
         this.region = region;
