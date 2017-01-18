@@ -76,7 +76,7 @@ public class Handler implements RequestStreamHandler {
 
             }
         } catch (Exception e) {
-            logger.debug("Exception: " + e.getMessage());
+            logger.debug("Exception: " + e.getMessage() + "\n" + e.getStackTrace());
             ErrorHandler.getErrorResponse(e);
         } catch (Error e) {
             logger.debug("Error: " + e.getMessage());

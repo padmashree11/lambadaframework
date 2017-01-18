@@ -61,7 +61,7 @@ public class ResponseProxy implements Serializable {
     }
 
     public void setCors() {
-        headers.put("Access-Control-Allow-Origin", "'*'");
+        headers.put("Access-Control-Allow-Origin", "*");
     }
 
     @JsonProperty("body")
