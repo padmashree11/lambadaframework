@@ -33,7 +33,7 @@ public class ResponseProxy implements Serializable {
      */
     protected Object entity;
 
-    public static void buildAndWriteFromJAXRSResponse(Object response, Writer writer) throws RuntimeException, IOException {
+    public static ResponseProxy buildFromJAXRSResponse(Object response) throws RuntimeException, IOException {
 
         ResponseProxy outputResponse = new ResponseProxy();
 
@@ -57,7 +57,7 @@ public class ResponseProxy implements Serializable {
             outputResponse.entity = response;
         }
 
-        outputResponse.write(writer);
+        return outputResponse;
     }
 
     public void setCors() {
@@ -79,9 +79,13 @@ public class ResponseProxy implements Serializable {
         return this.code;
     }
 
-    private void write(Writer writer) throws IOException {
-        new ObjectMapper().writeValue(writer, this);
-        writer.close();
+    public void write(Writer writer) {
+        try {
+            new ObjectMapper().writeValue(writer, this);
+            writer.close();
+        } catch (IOException e) {
+            logger.error(e.getStackTrace());
+        }
     }
 
 }

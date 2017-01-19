@@ -5,6 +5,7 @@ import org.lambadaframework.runtime.models.RequestInterface;
 
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RequestProxy implements Serializable, RequestInterface {
@@ -32,17 +33,17 @@ public class RequestProxy implements Serializable, RequestInterface {
     /**
      * Query parameters
      */
-    protected Map<String, String> pathParameters;
+    protected Map<String, String> pathParameters = new HashMap<>();
 
     /**
      * Query parameters
      */
-    protected Map<String, String> queryParams;
+    protected Map<String, String> queryParams = new HashMap<>();
 
     /**
      * Request headers
      */
-    protected Map<String, String> requestHeaders;
+    protected Map<String, String> requestHeaders = new HashMap<>();
 
     /**
      * Consumed media type
@@ -143,6 +144,9 @@ public class RequestProxy implements Serializable, RequestInterface {
     @JsonProperty("queryStringParameters")
     public RequestProxy setQuerystring(Map<String, String> queryParams) {
         this.queryParams = queryParams;
+        if (this.queryParams == null) {
+            this.queryParams = new HashMap<>();
+        }
         return this;
     }
 

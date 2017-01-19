@@ -13,11 +13,10 @@ import org.lambadaframework.jaxrs.model.ResourceMethod;
 import org.lambadaframework.runtime.errorhandling.ErrorHandler;
 import org.lambadaframework.runtime.models.RequestInterface;
 import org.lambadaframework.runtime.models.ResponseProxy;
+import org.lambadaframework.runtime.models.error.ErrorResponse;
 import org.lambadaframework.runtime.router.Router;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 
 public class Handler implements RequestStreamHandler {
@@ -59,9 +58,10 @@ public class Handler implements RequestStreamHandler {
         logger.debug("Loading Java Lambda handler of ProxyWithStream");
 
         Object invoke;
+        ResponseProxy responseProxy = null;
         try {
-
             RequestInterface req = getParsedRequest(inputStream);
+
             if (req == null) {
                 logger.debug("Request object is null can not proceed with request.");
             } else {
@@ -70,16 +70,20 @@ public class Handler implements RequestStreamHandler {
                 ResourceMethod matchedResourceMethod = getRouter().route(req);
                 invoke = ResourceMethodInvoker.invoke(matchedResourceMethod, req, context);
 
-                OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-                ResponseProxy.buildAndWriteFromJAXRSResponse(invoke, writer);
-                outputStream.close();
-
+                responseProxy = ResponseProxy.buildFromJAXRSResponse(invoke);
             }
         } catch (Exception e) {
             logger.debug("Exception: " + e.getMessage() + "\n" + e.getStackTrace());
-            ErrorHandler.getErrorResponse(e);
+            responseProxy = ErrorHandler.getErrorResponse(e);
         } catch (Error e) {
             logger.debug("Error: " + e.getMessage());
+        }
+
+        try {
+            responseProxy.write(new OutputStreamWriter(outputStream, "UTF-8"));
+            outputStream.close();
+        } catch (Exception e) {
+            logger.error("Failed to write response: " + e.getStackTrace());
         }
     }
 
