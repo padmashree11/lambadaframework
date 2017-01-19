@@ -4,7 +4,7 @@
     <parent>
         <groupId>se.simonsoft.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
-        <version>0.8.3</version>
+        <version>0.8.4</version>
     </parent>
     <artifactId>jax-rs-extractor</artifactId>
     <packaging>jar</packaging>
