@@ -96,7 +96,7 @@ public class RequestProxy implements Serializable, RequestInterface {
         return requestBody;
     }
 
-    @JsonProperty("requestBody") //TODO: Verify
+    @JsonProperty("body")
     public RequestProxy setRequestbody(String requestBody) {
         this.requestBody = requestBody;
         return this;
