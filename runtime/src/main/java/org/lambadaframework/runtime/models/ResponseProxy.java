@@ -21,7 +21,7 @@ public class ResponseProxy implements Serializable {
     /**
      * Response headers
      */
-    protected Map<String, String> headers;
+    protected Map<String, String> headers = new LinkedHashMap<>();
 
     /**
      * Status code
@@ -32,6 +32,16 @@ public class ResponseProxy implements Serializable {
      * Response entity
      */
     protected Object entity;
+
+    public ResponseProxy() {
+    }
+
+    public ResponseProxy(int code, Object entity) {
+        this.code = code;
+        this.entity = entity;
+        setCors();
+    }
+
 
     public static ResponseProxy buildFromJAXRSResponse(Object response) throws RuntimeException, IOException {
 
@@ -45,7 +55,6 @@ public class ResponseProxy implements Serializable {
 
             outputResponse.entity = JAXResponse.getEntity();
             outputResponse.code = status;
-            outputResponse.headers = new LinkedHashMap<>();
             outputResponse.setCors();
 
             for (Map.Entry<String, List<Object>> entry : JAXResponse.getHeaders().entrySet()) {

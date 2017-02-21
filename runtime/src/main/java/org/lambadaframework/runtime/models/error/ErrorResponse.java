@@ -9,13 +9,12 @@ public class ErrorResponse extends ResponseProxy {
 
     protected String errorMessage;
 
+
     public ErrorResponse() {
-        this.entity = "Internal Server Error";
-        this.code = 500;
+        super(500, "Internal Server Error");
     }
 
-    public ErrorResponse(String errorMessage) {
-        this();
-        this.entity = errorMessage;
+    public ErrorResponse(int code, Object entity) {
+        super(code, entity);
     }
 }

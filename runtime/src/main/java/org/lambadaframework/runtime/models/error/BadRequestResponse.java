@@ -5,12 +5,6 @@ public class BadRequestResponse extends ErrorResponse {
 
 
     public BadRequestResponse() {
-        this.entity = "Bad request";
-        this.code = 400;
-    }
-
-    public BadRequestResponse(String errorMessage) {
-        this();
-        this.entity = errorMessage;
+        super(400, "Bad request");
     }
 }
