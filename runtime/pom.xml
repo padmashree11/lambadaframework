@@ -3,7 +3,7 @@
     <parent>
         <groupId>se.simonsoft.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.7</version>
     </parent>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
