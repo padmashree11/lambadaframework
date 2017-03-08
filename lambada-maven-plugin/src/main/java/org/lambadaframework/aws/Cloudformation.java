@@ -435,8 +435,8 @@ public class Cloudformation extends AWSTools {
             log.info("Stack already exists. Trying to update.");
             try {
                 updateStack(deployment, getCloudformationTemplate());
-            } catch (AmazonServiceException noUpdateNeededException) {
-                log.info("No updates needed for Cloudformation. Resuming deployment.");
+            } catch (AmazonServiceException e) {
+                log.error("Error when trying to update lambda", e);
             }
         }
 
