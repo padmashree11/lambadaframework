@@ -183,13 +183,15 @@
     </profiles>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>repos.open.repo</id>
+            <name>Simonsoft / Repos Open Repository</name>
+            <url>s3://opensource.simonsoft.se/maven</url>
         </repository>
+        <site>
+            <id>repos.open.repo</id>
+            <name>Simonsoft / Repos Open Repository Site</name>
+            <url>s3://opensource.simonsoft.se/modules/${project.groupId}.${project.artifactId}</url>
+        </site>
     </distributionManagement>
 </project>
