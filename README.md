@@ -113,7 +113,7 @@ All the possible parameters are as follows:
 
 Below you can find detailed information about the configuration parameters:
 
-- **packageName:** The package name to scan for JAX-RS annotations.
+- **packageName:** The package name of the parent package in which the JAX-RS annotations reside.
 
 - **regionToDeploy:** AWS Region to deploy your API. It should be a region where Lambda and API Gateway are supported.
 
