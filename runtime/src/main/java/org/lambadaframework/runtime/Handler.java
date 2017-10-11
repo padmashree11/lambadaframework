@@ -93,6 +93,7 @@ public class Handler implements RequestStreamHandler {
             outputStream.close();
         } catch (Exception e) {
             logger.error("Failed to write response: " + e.getStackTrace());
+            throw new RuntimeException("Failed to write response.");
         }
     }
 
