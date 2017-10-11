@@ -4,7 +4,7 @@
     <parent>
         <groupId>se.simonsoft.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
-        <version>0.8.7</version>
+        <version>0.8.8</version>
     </parent>
 
     <artifactId>lambada-maven-plugin</artifactId>
