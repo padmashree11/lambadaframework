@@ -7,8 +7,6 @@ import org.lambadaframework.runtime.models.ResponseProxy;
 
 public class ErrorResponse extends ResponseProxy {
 
-    protected String errorMessage;
-
 
     public ErrorResponse() {
         super(500, "Internal Server Error");

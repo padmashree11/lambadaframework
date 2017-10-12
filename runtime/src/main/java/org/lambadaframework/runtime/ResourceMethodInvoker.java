@@ -144,7 +144,7 @@ public class ResourceMethodInvoker {
                 varargs.add(lambdaContext);
             }
         }
-        //TODO: Catch Invocation target exception and throw the underlying exception.
+        //Caller must catch Invocation target exception and throw the underlying exception.
         return method.invoke(instance, varargs.toArray());
     }
 

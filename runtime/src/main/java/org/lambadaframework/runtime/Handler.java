@@ -17,6 +17,7 @@ import org.lambadaframework.runtime.models.error.ErrorResponse;
 import org.lambadaframework.runtime.router.Router;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 
 public class Handler implements RequestStreamHandler {
@@ -72,6 +73,14 @@ public class Handler implements RequestStreamHandler {
 
                 responseProxy = ResponseProxy.buildFromJAXRSResponse(invoke);
             }
+        } catch (InvocationTargetException ite) {
+        	Throwable t = ite.getCause();
+            logger.debug("Exception: " + t.getMessage() + "\n" + t.getStackTrace());
+            if (t instanceof Exception) {
+            	responseProxy = ErrorHandler.getErrorResponse((Exception) t);
+            } else {
+            	throw new RuntimeException("Invocation failed, cause is unknown throwable: " + t.getMessage());    
+            }
         } catch (Exception e) {
             logger.debug("Exception: " + e.getMessage() + "\n" + e.getStackTrace());
             responseProxy = ErrorHandler.getErrorResponse(e);
@@ -84,6 +93,7 @@ public class Handler implements RequestStreamHandler {
             outputStream.close();
         } catch (Exception e) {
             logger.error("Failed to write response: " + e.getStackTrace());
+            throw new RuntimeException("Failed to write response.");
         }
     }
 
