@@ -23,6 +23,8 @@ public class ErrorHandler {
             throw e;
         } catch (InvocationTargetException ex) {
             return new BadRequestResponse();
+        } catch (IllegalArgumentException ex) {
+            return new BadRequestResponse(); // TODO: Send the message?
         } catch (NotFoundException ex) {
             return new NotFoundErrorResponse();
         } catch (RuntimeException ex) {
