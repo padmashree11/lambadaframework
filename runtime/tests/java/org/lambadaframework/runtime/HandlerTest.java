@@ -1,10 +1,27 @@
 package org.lambadaframework.runtime;
 
-import com.amazonaws.services.lambda.runtime.ClientContext;
-import com.amazonaws.services.lambda.runtime.CognitoIdentity;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.glassfish.jersey.server.model.Invocable;
 import org.glassfish.jersey.server.model.MethodHandler;
 import org.glassfish.jersey.server.model.ResourceMethod;
@@ -21,15 +38,12 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.amazonaws.services.lambda.runtime.ClientContext;
+import com.amazonaws.services.lambda.runtime.CognitoIdentity;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.util.StringInputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Invocable.class, ResourceMethod.class, Router.class, org.lambadaframework.jaxrs.model.ResourceMethod.class})
@@ -225,7 +239,7 @@ public class HandlerTest {
         RequestInterface req = handler.getParsedRequest(jsonAsInputStream);
 
         assertEquals("GET", req.getMethod().name());
-        assertEquals("/test/hello", req.getPathTemplate());
+        assertEquals("/{name}", req.getPathTemplate());
         assertEquals("me", req.getQueryParams().get("name"));
     }
 
@@ -259,7 +273,10 @@ public class HandlerTest {
 
     private InputStream getJsonAsInputStream() {
         String json = "{\n" +
-                "        \"path\": \"/test/hello\",\n" +
+                "        \"path\": {\n" + 
+                "          \"name\": \"who\"\n" + 
+                "        },\n" +
+                "		 \"pathtemplate\": \"/{name}\"," +
                 "        \"headers\": {\n" +
                 "            \"Accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\",\n" +
                 "            \"Accept-Encoding\": \"gzip, deflate, lzma, sdch, br\",\n" +
@@ -303,6 +320,37 @@ public class HandlerTest {
         JSONObject json = (JSONObject) parser.parse(boas.toString());
         JSONObject body = (JSONObject) json.get("body");
         assertEquals(1234L, body.get("id"));
+        assertEquals("cagatay gurturk", body.get("query1"));
+
+    }
+    
+    @Test
+    public void testWithRealWorldRequest() throws UnsupportedEncodingException, NoSuchMethodException, ParseException {
+    	// this is the actual json received from API Gateway
+    	String jsonIN = "{\n" + 
+    			"    \"package\": \"org.lambadaframework.runtime.HandlerTest.DummyController\",\n" + 
+    			"    \"pathtemplate\": \"/{name}\",\n" + 
+    			"    \"method\": \"GET\",\n" + 
+    			"    \"requestbody\": \"{}\",\n" + 
+    			"    \"path\": {\n" + 
+    			"        \"id\": \"999\"\n" + 
+    			"    },\n" + 
+    			"    \"querystring\": {},\n" + 
+    			"    \"header\": {}\n" + 
+    			"}";
+
+        Handler handler = new Handler();
+        handler.setRouter(getMockRouter("getEntity", long.class));
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
+
+        final StringInputStream inputStream = new StringInputStream(jsonIN);
+		final Context context = getContext();
+		handler.handleRequest(inputStream, boas, context);
+
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(boas.toString());
+        JSONObject body = (JSONObject) json.get("body");
+        assertEquals(999L, body.get("id"));
         assertEquals("cagatay gurturk", body.get("query1"));
 
     }

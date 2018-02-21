@@ -1,23 +1,26 @@
 package org.lambadaframework.runtime;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.util.StreamUtils;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
+import org.lambadaframework.runtime.errorhandling.ErrorHandler;
+import org.lambadaframework.runtime.models.RequestInterface;
+import org.lambadaframework.runtime.models.ResponseProxy;
+import org.lambadaframework.runtime.router.Router;
+
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
-import org.lambadaframework.jaxrs.model.ResourceMethod;
-import org.lambadaframework.runtime.errorhandling.ErrorHandler;
-import org.lambadaframework.runtime.models.RequestInterface;
-import org.lambadaframework.runtime.models.ResponseProxy;
-import org.lambadaframework.runtime.models.error.ErrorResponse;
-import org.lambadaframework.runtime.router.Router;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 
 
 public class Handler implements RequestStreamHandler {
@@ -110,14 +113,18 @@ public class Handler implements RequestStreamHandler {
     protected RequestInterface getParsedRequest(InputStream inputStream) throws Exception {
         logger.debug("Starting to parse request stream");
 
-        JsonParser jp = new JsonFactory().createParser(inputStream);
+        byte[] json = StreamUtils.getBytes(inputStream);
+        
+        logger.info("JSON input: " + new String(json));
+        
+        JsonParser jp = new JsonFactory().createParser(new ByteArrayInputStream(json));
         RequestInterface req = null;
 
         ObjectMapper configuredMapper = getConfiguredMapper();
         //Can't handle if stream starts with array.
         while (jp.nextToken() == JsonToken.START_OBJECT) {
             req = configuredMapper.readValue(jp, RequestProxy.class);
-            logger.debug("Parsed input stream to Request object");
+            logger.debug("Parsed input stream to Request object: " + req.toString());
         }
 
         jp.close();

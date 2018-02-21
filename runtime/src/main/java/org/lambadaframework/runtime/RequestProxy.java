@@ -1,12 +1,14 @@
 package org.lambadaframework.runtime;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.lambadaframework.runtime.models.RequestInterface;
-
-import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+
+import org.lambadaframework.runtime.models.RequestInterface;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RequestProxy implements Serializable, RequestInterface {
 
@@ -61,9 +63,14 @@ public class RequestProxy implements Serializable, RequestInterface {
         return new MediaType(m[0], m[1]);
     }
 
-
-    @JsonProperty("httpMethod")
+    @JsonProperty("method") // real-world testing 2/21/2018
     public RequestProxy setMethod(RequestMethod method) {
+        this.method = method;
+        return this;
+    }
+    
+    @JsonProperty("httpMethod") // outdated value ?!?!
+    public RequestProxy setHttpMethod(RequestMethod method) {
         this.method = method;
         return this;
     }
@@ -74,19 +81,16 @@ public class RequestProxy implements Serializable, RequestInterface {
     }
 
     @Override
-    public String getPackage() {
-        this.packageName =  System.getenv("PackageNameRest");
-        return this.packageName;
-    }
-
-    @Override
     public String getPathTemplate() {
         return pathTemplate;
     }
     /*
-    There is no path template when using proxy. This is the actual request path.
+     * There is no path template when using proxy. This is the actual request path.
+     * But that doesn't matter because the current API Gateway generator does not use PROXY method.
+     * In this case the pathtemplate is passed.
+     * 
      */
-    @JsonProperty("path")
+    @JsonProperty("pathtemplate")
     public RequestProxy setPathtemplate(String pathTemplate) {
         this.pathTemplate = pathTemplate;
         return this;
@@ -130,7 +134,7 @@ public class RequestProxy implements Serializable, RequestInterface {
         return pathParameters;
     }
 
-    @JsonProperty("pathParameters")
+    @JsonProperty("path") // sometime prior to 2018 this was called pathParameters, now it's path
     public RequestProxy setPath(Map<String, String> pathParameters) {
         this.pathParameters = pathParameters;
         return this;
@@ -175,4 +179,14 @@ public class RequestProxy implements Serializable, RequestInterface {
                 ", producedMediaType=" + producedMediaType +
                 '}';
     }
+
+    @Override
+	public String getPackage() {
+		return packageName;
+	}
+	
+	@JsonProperty("package")
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
 }
