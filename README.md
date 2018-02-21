@@ -16,7 +16,7 @@ Lambada consists of a runtime module, a local simulator and finally a maven plug
 
 We prepared an example project to show how to configure a project for Lambada and deploy it to API Gateway. 
 
-1. Download the [example project](https://github.com/lambadaframework/lambadaframework-boilerplate).
+1. The example project is embedded as a module named 'boilerplate'.
 2. Make sure your default profile has admin privileges or at least has the following policy:
 
     ```
