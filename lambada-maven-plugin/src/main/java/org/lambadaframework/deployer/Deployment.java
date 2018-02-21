@@ -1,16 +1,11 @@
 package org.lambadaframework.deployer;
 
 
-import com.amazonaws.services.cloudformation.model.Parameter;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
-import com.amazonaws.services.identitymanagement.model.GetUserRequest;
-import com.amazonaws.services.identitymanagement.model.GetUserResult;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.lambadaframework.aws.S3;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,11 +13,18 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Properties;
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.lambadaframework.aws.S3;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+import com.amazonaws.services.cloudformation.model.Parameter;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.model.GetUserRequest;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 
 public class Deployment {
 
@@ -286,6 +288,14 @@ public class Deployment {
 
         return role;
     }
+
+	@Override
+	public String toString() {
+		return String.format(
+				"Deployment [cloudFormationRoleName=%s, packageName=%s, stage=%s, region=%s, bucket=%s, deploymentS3KeyTemplate=%s, properties=%s, project=%s, log=%s]",
+				cloudFormationRoleName, packageName, stage, region, bucket, deploymentS3KeyTemplate, properties,
+				project, log);
+	}
 
 
 }

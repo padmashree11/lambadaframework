@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>se.simonsoft.lambadaframework</groupId>
+    <groupId>org.lambadaframework</groupId>
     <artifactId>lambada</artifactId>
     <version>0.8.8</version>
     <packaging>pom</packaging>
@@ -36,7 +36,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aws-sdk.version>1.11.78</aws-sdk.version>
+        <aws-sdk.version>1.11.281</aws-sdk.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.1.7</logback.version>
         <mockito.version>1.10.19</mockito.version>
@@ -52,6 +52,7 @@
         <module>runtime</module>
         <module>lambada-maven-plugin</module>
         <module>wagon</module>
+        <module>boilerplate</module>
     </modules>
 
     <dependencies>
@@ -195,12 +196,12 @@
         <repository>
             <id>repos.open.repo</id>
             <name>Simonsoft / Repos Open Repository</name>
-            <url>s3://opensource.simonsoft.se/maven</url>
+            <url>s3://lambada.test/maven</url>
         </repository>
         <site>
             <id>repos.open.repo</id>
             <name>Simonsoft / Repos Open Repository Site</name>
-            <url>s3://opensource.simonsoft.se/modules/${project.groupId}.${project.artifactId}</url>
+            <url>s3://lambada.test/modules/${project.groupId}.${project.artifactId}</url>
         </site>
     </distributionManagement>
 </project>

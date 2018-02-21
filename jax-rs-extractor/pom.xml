@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>se.simonsoft.lambadaframework</groupId>
+        <groupId>org.lambadaframework</groupId>
         <artifactId>lambada</artifactId>
         <version>0.8.8</version>
     </parent>
@@ -28,7 +28,7 @@
         </dependency>
 
         <dependency>
-            <groupId>se.simonsoft.lambadaframework</groupId>
+            <groupId>org.lambadaframework</groupId>
             <artifactId>stub-handlers</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>

@@ -1,17 +1,24 @@
 package org.lambadaframework.aws;
 
+import java.util.List;
+
+import org.lambadaframework.deployer.Deployment;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudformation.AmazonCloudFormation;
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClient;
-import com.amazonaws.services.cloudformation.model.*;
-import org.lambadaframework.deployer.Deployment;
-
-import java.util.List;
+import com.amazonaws.services.cloudformation.model.AlreadyExistsException;
+import com.amazonaws.services.cloudformation.model.Capability;
+import com.amazonaws.services.cloudformation.model.CreateStackRequest;
+import com.amazonaws.services.cloudformation.model.DescribeStacksRequest;
+import com.amazonaws.services.cloudformation.model.Stack;
+import com.amazonaws.services.cloudformation.model.StackStatus;
+import com.amazonaws.services.cloudformation.model.UpdateStackRequest;
 
 public class Cloudformation extends AWSTools {
-
+	
     private final static String CLOUDFORMATION_TEMPLATE = "{\n" +
             "  \"AWSTemplateFormatVersion\": \"2010-09-09\",\n" +
             "  \"Description\": \"\",\n" +
@@ -20,6 +27,11 @@ public class Cloudformation extends AWSTools {
             "      \"Type\": \"Number\",\n" +
             "      \"Default\": \"128\",\n" +
             "      \"Description\": \"AWS Lambda Function Maximum Allowed Memory.\"\n" +
+            "    },\n" +
+            "    \"Stage\": {\n" +
+            "      \"Type\": \"String\",\n" +
+            "      \"Default\": \"${stage}\",\n" +
+            "      \"Description\": \"API Gateway stage name.\"\n" +
             "    },\n" +
             "    \"LambdaHandler\": {\n" +
             "      \"Type\": \"String\",\n" +
@@ -467,6 +479,8 @@ public class Cloudformation extends AWSTools {
         } else {
             createRequest.setRoleARN(role);
         }
+
+        log.info(templateBody);
 
         getCloudFormationClient().createStack(createRequest);
         log.info("Stack creation completed, the stack " + templateName + " completed with " + waitForCompletion());
