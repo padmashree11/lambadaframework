@@ -1,14 +1,15 @@
 package org.lambadaframework.deployer;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.lambadaframework.AbstractMojoPlugin;
-import org.lambadaframework.aws.LambdaFunction;
 import org.lambadaframework.aws.ApiGateway;
 import org.lambadaframework.aws.Cloudformation;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Mojo;
+import org.lambadaframework.aws.LambdaFunction;
+
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 
 
 @Mojo(name = "deploy",
@@ -69,7 +70,7 @@ public class LambadaDeployer extends AbstractMojoPlugin {
             /**
              * Set up VPC of Lambda, create new version
              */
-            /*getLog().info("LAMBDA");
+            getLog().info("LAMBDA");
             LambdaFunction lambdaFunction = new LambdaFunction(cloudFormationOutput.getLambdaFunctionArn(), deployment);
             lambdaFunction.setLog(getLog());
             String functionArn = lambdaFunction.deployLatestVersion();
@@ -79,7 +80,7 @@ public class LambadaDeployer extends AbstractMojoPlugin {
             ApiGateway apiGateway = new ApiGateway(deployment, functionArn, cloudFormationOutput.getLambdaExecutionRole());
             apiGateway.setLog(getLog());
             apiGateway.deployEndpoints();
-            getLog().info(LOG_SEPERATOR);*/
+            getLog().info(LOG_SEPERATOR);
 
 
         } catch (Exception e) {
