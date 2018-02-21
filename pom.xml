@@ -51,7 +51,6 @@
         <module>jax-rs-extractor</module>
         <module>runtime</module>
         <module>lambada-maven-plugin</module>
-        <module>wagon</module>
         <module>boilerplate</module>
     </modules>
 
