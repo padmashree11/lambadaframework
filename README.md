@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lambadaframework/lambadaframework.svg?branch=master)](https://travis-ci.org/lambadaframework/lambadaframework) [![Gitter](https://badges.gitter.im/lambadaframework/lambadaframework.svg)](https://gitter.im/lambadaframework/lambadaframework?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build Status](https://travis-ci.org/cagataygurturk/lambadaframework.svg?branch=master)](https://travis-ci.org/cagataygurturk/lambadaframework) [![Gitter](https://badges.gitter.im/lambadaframework/lambadaframework.svg)](https://gitter.im/lambadaframework/lambadaframework?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Lambada Framework (BETA)
 
@@ -16,7 +16,7 @@ Lambada consists of a runtime module, a local simulator and finally a maven plug
 
 We prepared an example project to show how to configure a project for Lambada and deploy it to API Gateway. 
 
-1. Download the [example project](https://github.com/lambadaframework/lambadaframework-boilerplate).
+1. Download the [example project](https://github.com/cagataygurturk/lambadaframework-boilerplate).
 2. Make sure your default profile has admin privileges or at least has the following policy:
 
     ```
