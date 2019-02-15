@@ -1,5 +1,21 @@
 package org.lambadaframework.aws;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import org.lambadaframework.deployer.Deployment;
+import org.lambadaframework.jaxrs.JAXRSParser;
+import org.lambadaframework.jaxrs.model.Resource;
+import org.lambadaframework.jaxrs.model.ResourceMethod;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ClientConfiguration;
@@ -10,19 +26,6 @@ import com.amazonaws.retry.RetryPolicy;
 import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.apigateway.AmazonApiGatewayClient;
 import com.amazonaws.services.apigateway.model.*;
-import org.lambadaframework.deployer.Deployment;
-import org.lambadaframework.jaxrs.model.Resource;
-import org.lambadaframework.jaxrs.model.ResourceMethod;
-import org.lambadaframework.jaxrs.JAXRSParser;
-
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class ApiGateway extends AWSTools {
@@ -480,6 +483,7 @@ public class ApiGateway extends AWSTools {
                         .withRestApiId(amazonApi.getId())
                         .withResourceId(apiGatewayResource.getId())
                         .withHttpMethod(httpMethod)
+                        .withResponseParameters(getMethodResponseParameters())
                         .withStatusCode(String.valueOf(responseCode))
                 );
 
@@ -492,6 +496,7 @@ public class ApiGateway extends AWSTools {
                         .withHttpMethod(httpMethod)
                         .withSelectionPattern(selectionPattern)
                         .withResponseTemplates(getResponseTemplate())
+                        .withResponseParameters(getIntegrationResponseParameters())
                         .withStatusCode(String.valueOf(responseCode))
                 );
 
@@ -501,7 +506,19 @@ public class ApiGateway extends AWSTools {
     }
 
 
-    private Map<String, String> getResponseTemplate() {
+    private Map<String, Boolean> getMethodResponseParameters() {
+		Map<String,Boolean> map = new HashMap<String, Boolean>();
+		map.put("Access-Control-Allow-Origin", Boolean.FALSE);
+		return map;
+	}
+
+	private Map<String, String> getIntegrationResponseParameters() {
+		Map<String,String> map = new HashMap<String, String>();
+		map.put("Access-Control-Allow-Origin", "'*'");
+		return map;
+	}
+
+	private Map<String, String> getResponseTemplate() {
 
         Map<String, String> responseTemplate = new LinkedHashMap<>();
 
